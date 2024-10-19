@@ -2115,6 +2115,14 @@ switch ($act) {
         }
         exit(json_encode( ["code" => 1, "data" => $data] ));
         break;
+    case "dl_idname":
+        $dl_idname_return = $DB->query("select uid,name,active from qingka_wangke_user order by CASE WHEN uid = 1 THEN 0 ELSE 1 END, CAST(uid AS UNSIGNED) desc");
+        $data = [];
+        while($row = $DB->fetch($dl_idname_return)){
+            $data[] = $row;
+        }
+        exit(json_encode( ["code" => 1, "data" => $data] ));
+        break;
         // 代理列表
     case 'userlist':
         $type = trim(strip_tags(daddslashes($_POST['type'])));
