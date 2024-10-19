@@ -1,0 +1,801 @@
+:root {
+    --theme-color-1: #4cc2ff;/*主题色*/
+    --theme-color-2: #16b777;/*主题色辅色*/
+    --theme-bg-1: #202020 radial-gradient(#1a1f35 25%, #202020 100%) no-repeat fixed;
+    --text-color-1: #a9b2bf;/*文字默认颜色*/
+    --card-bg: #282c38;
+    --card-boxShadow: 1px 1px 50px rgba(0,0,0,.5);
+    --card-boxShadow-2: 0px 0px 15px rgba(0,0,0,.3);
+    --border-color-1: rgba(255,255,255,1);
+    --border-color-2: rgba(255,255,255,.8);
+    --border-color-3: rgba(255,255,255,.4);
+    --border-color-4: rgba(255,255,255,.1);
+    --popUpBox-bg-1: #26272A;/* 弹出框背景色 */
+}
+
+#PAGECOVERID,#INDEXCOVERID{
+    background: var(--theme-bg-1) !important;
+}
+
+
+#PAGECOVERID .COVERID_BOX .COVERID_LOAD,#INDEXCOVERID .COVERID_BOX .COVERID_LOAD{
+    box-shadow: 0 0 0 0 #cccccc ;
+    background: #cccccc ;
+}
+
+#PAGECOVERID .COVERID_BOX .COVERID_LOAD:before, #PAGECOVERID .COVERID_BOX .COVERID_LOAD:after,#INDEXCOVERID .COVERID_BOX .COVERID_LOAD:before,#INDEXCOVERID .COVERID_BOX .COVERID_LOAD:after{
+    box-shadow: 0 0 0 0 #cccccc ;
+}
+
+#quickOP_HOME a:hover{
+    color: var(--theme-color-1);
+}
+
+a{
+    color: var(--text-color-1);
+}
+
+a:hover{
+    color: #ffffff;
+}
+select{
+    background: rgba(255,255,255,.03);
+    color: var(--border-color-2);
+}
+
+select:hover{
+    border-color: var(--theme-color-2) !important;
+}
+
+select option {
+    color: var(--border-color-2);
+    background: var(--theme-bg-1);
+}
+
+.well, pre{
+    background-color: rgba(255,255,255,.02);
+}
+
+/* 对于 WebKit 浏览器（如 Chrome、Safari） */
+::-webkit-scrollbar {
+    width: 6px; /* 滚动条宽度 */
+    height: 6px; /* 滚动条高度 */
+}
+
+::-webkit-scrollbar:hover {
+}
+
+::-webkit-scrollbar-button{
+    display: none;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; /* 滚动条轨道颜色 */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #696061; /* 滚动条颜色 */
+    border-radius: 10px; /* 圆角 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #847a7b; /* 滚动条在鼠标悬停时的颜色 */
+    width: 12px; /* 滚动条宽度 */
+}
+
+
+body{
+    height: auto;
+    background: var(--theme-bg-1);
+    color: var(--text-color-1);
+    /*-ms-overflow-style: scrollbar; */
+}
+
+hr{
+    border-bottom: 1px solid var(--border-color-4);
+}
+
+.layui-tree-txt{
+    color: var(--border-color-2);
+}
+
+.layui-tree-line .layui-tree-entry:hover .layui-tree-txt{
+    color: var(--theme-color-2);
+}
+
+.layui-tree-entry:hover{
+    background: rgba(0, 178, 255, .16);
+}
+
+.layui-tree-entry:hover .layui-tree-txt{
+    color: var(--theme-color-2);
+}
+
+.layadmin-note textarea{
+    background: var(--theme-bg-1);
+    color: var(--border-color-2);
+}
+
+.layui-body{
+    background: transparent;
+}
+
+.layui-icon{
+    color: inherit;
+}
+
+.el-alert__icon{
+    font-size: inherit;
+}
+
+.layui-laypage a[data-page]{
+    color: var(--border-color-2);
+}
+
+.layui-laypage a:hover{
+    color: var(--theme-color-1);
+    font-weight: bold;
+}
+
+.layui-laypage .layui-laypage-curr em{
+    color: var(--theme-color-1);
+    font-weight: bold;
+}
+
+.layui-laypage a, .layui-laypage span{
+    background: transparent;
+    color: var(--border-color-2);
+}
+
+.layui-laypage select{
+    background: transparent;
+    color: var(--border-color-2);
+}
+
+.layui-laypage a, .layui-laypage button, .layui-laypage input, .layui-laypage select, .layui-laypage span{
+    border: 1px solid var(--border-color-4);
+}
+
+.layui-laypage .layui-laypage-curr .layui-laypage-em{
+    background-color: var(--theme-bg-1);
+}
+
+.layui-side-menu .layui-side-scroll{
+    background: var(--theme-bg-1);
+}
+
+.layui-layout-admin .layui-header{
+    background: var(--theme-bg-1);
+    border-bottom: 1px solid var(--border-color-4);
+}
+
+.layui-layout-admin .layui-logo{
+    background: var(--theme-bg-1);
+}
+
+.layui-nav-tree .layui-nav-bar{
+    background: var(--theme-color-2);
+}
+
+.layui-nav-tree .layui-nav-item>a{
+    padding: 0;
+}
+
+.layui-nav-tree .layui-nav-item>a .layui-nav-more{
+    padding: 0;
+}
+
+.layui-nav .layui-nav-item a:hover, .layui-nav .layui-this a{
+    color: var(--theme-color-2);
+}
+
+.layui-nav-tree .layui-this{
+    background: transparent;
+}
+
+.layui-nav-tree .layui-nav-item{
+    margin: 2px 0;
+}
+
+.layui-nav-tree .layui-nav-child dd{
+    margin: 2px 0;
+}
+
+.layui-nav-tree .layui-nav-child dd.layui-this{
+    background: transparent;
+}
+
+ .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover{
+    background-color: rgb(255 255 255/5%);
+    color: var(--theme-color-2);
+}
+
+.layui-side .layui-nav-tree .layui-nav-bar{
+    display: none;
+}
+
+.layui-side-menu .layui-nav .layui-nav-item a{
+    margin: 0 10px;
+    border-radius: 10px;
+}
+
+.layadmin-side-shrink .layui-side-menu .layui-nav .layui-nav-item a{
+    margin: 0px;
+}
+
+.layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover i{
+    color: var(--theme-color-2);
+}
+
+.layui-side-menu .layui-nav .layui-nav-item a:hover{
+    background-color: rgb(255 255 255/5%);
+    margin: 0 10px;
+    border-radius: 30px;
+    color: var(--theme-color-2);
+}
+
+.layui-nav-itemed>a, .layui-nav-tree .layui-nav-title a, .layui-nav-tree .layui-nav-title a:hover{
+    color: var(--theme-color-2) !important;
+}
+
+.layadmin-side-shrink .layui-side-menu .layui-nav .layui-nav-item a:hover{
+    margin: 0px;
+}
+
+.layui-layout-admin .layui-header a, .layui-layout-admin .layui-header a cite{
+    color: var(--border-color-2);
+}
+
+.layui-layout-admin .layui-header a:hover{
+    color: var(--theme-color-1);
+}
+
+.layui-layout-admin .layui-header a:hover .layui-icon{
+    color: var(--theme-color-1);
+}
+
+.layui-layout-admin .layui-header .layui-nav .layui-this:after, .layui-layout-admin .layui-header .layui-nav-bar{
+    background-color: var(--theme-color-1);
+}
+
+.layadmin-pagetabs{
+    background: var(--theme-bg-1);
+    color: var(--border-color-2);
+    border-bottom: 1px solid var(--border-color-4);
+}
+
+.layadmin-pagetabs .layui-tab-title li.layui-this, .layadmin-pagetabs .layui-tab-title li{
+    background-color: transparent;
+    color: var(--border-color-2);
+}
+
+.layadmin-pagetabs .layui-tab-title li.layui-this, .layadmin-pagetabs .layui-tab-title li:hover{
+    background-color: rgba(0, 178, 255, .16);
+    color: var(--theme-color-2);
+}
+
+.layadmin-pagetabs .layui-tab-title li:after{
+    background-color: var(--theme-color-1);
+}
+
+.layadmin-pagetabs .layadmin-tabs-control{
+    border-left: 1px solid var(--border-color-4);
+}
+
+.layadmin-pagetabs .layadmin-tabs-control:hover{
+    background: rgba(0, 178, 255, .16);
+}
+
+.layadmin-pagetabs .layui-tab-title li{
+    border-right: 1px solid var(--border-color-4);
+}
+
+.layadmin-pagetabs .layui-tab-title li.layui-this:after{
+    background-color: var(--theme-color-2);
+}
+
+.layui-header li{
+    position: relative;
+}
+
+.layui-header .weatherLi #tp-weather-widget{
+    scale: .8;
+    background: #333742;
+    padding: 0 10px;
+    color: var(--border-color-2) !important;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.layui-header .weatherLi #tp-weather-widget .dsrBSL{
+    color: var(--border-color-2) !important;
+}
+
+.layui-layer{
+    background: var(--popUpBox-bg-1);
+    box-shadow: var(--card-boxShadow-2);
+    border-radius: 8px;
+}
+
+.layui-layer-msg{
+    border: 1px solid var(--border-color-4);
+}
+
+.layui-layer-loading{
+    background: 0 0;
+    box-shadow: none;
+}
+
+.layui-layer-title{
+    color: var(--border-color-2);
+    border-bottom: 1px solid var(--border-color-4);
+}
+
+.layui-layer-content{
+    color: var(--border-color-2);
+    
+}
+
+.layui-layer-btn {
+    /*background-color: #202020;*/
+    border-top: 1px solid var(--border-color-4);
+}
+
+.layui-layer-btn a{
+    border: 1px solid var(--border-color-4);
+    background-color: #b4b4b4;
+}
+
+.layui-layer-btn .layui-layer-btn0{
+    background-color: #1f7fc7;
+}
+
+.layui-bg-blue{
+    background-color: #1f7fc7 !important;
+}
+
+
+.layui-layer-setwin span{
+    color: #909399;
+}
+
+.layui-layer-setwin span:hover{
+    color: rgba(255,255,255, 1);
+}
+
+
+
+.layui-layer-setwin .layui-layer-max:after, .layui-layer-setwin .layui-layer-max:before{
+    border: 1px solid #909399;
+}
+
+.layui-layer-setwin .layui-layer-min:before{
+    border-bottom: 1px solid #909399;
+}
+
+.layui-timeline-axis{
+    background: transparent;
+}
+
+.layui-nav-child{
+    background: var(--theme-bg-1);
+    border: 1px solid var(--border-color-4);
+}
+
+.layui-layout-admin .layui-header .layui-nav .layui-nav-child a{
+    color: var(--border-color-2);
+}
+
+.layui-layout-admin .layui-header .layui-nav .layui-nav-child a:hover{
+    background: rgba(0, 178, 255, .16);
+    color: var(--theme-color-1);
+}
+
+.layui-nav .layui-nav-child a:hover{
+    background: rgba(0, 178, 255, .16);
+    color: var(--theme-color-1);
+}
+
+.layui-timeline-item:before{
+    top: 15px;
+}
+
+.layui-timeline-item:before{
+    background-color: var(--border-color-4);
+}
+
+.layui-colla-title{
+    background: var(--theme-bg-1);
+    color: var(--border-color-1);
+}
+
+.layui-colla-content{
+    color: var(--border-color-2);
+}
+
+
+.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{
+    border-bottom: 2px solid #ffffff;
+}
+
+.layui-panel{
+    background: var(--card-bg);
+    border: 0;
+    color: var(--text-color-1);
+}
+
+
+
+.layui-card{
+    background: var(--card-bg);
+    border: 0;
+    color: var(--border-color-2);
+}
+
+.layui-card-header{
+    border-bottom: 1px solid var(--border-color-4);
+    color: var(--border-color-2);
+}
+
+.layui-card-header a{
+    color: var(--border-color-2);
+}
+
+.layui-card-header a:hover{
+    color: var(--theme-color-1);
+}
+
+#LAY_adminPopupMore .layui-card-header{
+    font-size: 14px;
+}
+
+#LAY_adminPopupMore .layui-card-header:hover{
+    background: rgba(0, 178, 255, .16);
+}
+
+.layui-layer-prompt .layui-layer-input{
+    background: transparent;
+    color: var(--border-color-2);
+    border: 1px solid var(--border-color-4);
+}
+
+.el-link.el-link--default{
+    color: var(--border-color-2);
+}
+
+.layui-border{
+    color: var(--text-color-1) !important;
+}
+
+.layui-border-purple{
+    color: #3d94ed !important;
+    border-color: #3d94ed !important;
+}
+
+.layui-border-red{
+    color: #FF5722 !important;
+    border-color: #FF5722 !important;
+}
+
+
+.layui-table{
+    background: #333742;
+    color: var(--border-color-2);
+}
+
+.layui-table td:hover{
+    background: rgba(255,255,255,.06);
+    /*color: var(--theme-color-1) !important;*/
+}
+
+.layui-table td:hover span{
+    /*color: var(--theme-color-1) !important;*/
+}
+
+.layui-table-grid-down{
+    background-color: #19222C;
+    opacity: .9;
+}
+
+.layui-table-grid-down:hover{
+    background-color: #19222C;
+    opacity: 1;
+}
+
+.layui-table-grid-down i{
+    color: var(--border-color-4) !important;
+}
+
+.layui-table td:hover i{
+    color: var(--theme-color-1) !important;
+}
+
+
+
+.layui-table-tips-main{
+    background: var(--theme-bg-1);
+    color: var(--border-color-1);
+}
+
+.layui-table-checked.layui-table-click, .layui-table-checked.layui-table-hover{
+    background-color: rgba(0, 178, 255, .26);
+}
+
+.layui-table-checked{
+    background-color: rgba(0, 178, 255, .26);
+}
+
+
+.layui-table td, .layui-table th, .layui-table-col-set, .layui-table-fixed-r, .layui-table-grid-down, .layui-table-header, .layui-table-mend, .layui-table-page, .layui-table-tips-main, .layui-table-tool, .layui-table-total, .layui-table-view, .layui-table[lay-skin=line], .layui-table[lay-skin=row]{
+    border-color: var(--border-color-4);
+}
+
+.layui-badge-rim, .layui-border, .layui-colla-content, .layui-colla-item, .layui-collapse, .layui-elem-field, .layui-form-pane .layui-form-item[pane], .layui-form-pane .layui-form-label, .layui-input, .layui-input-split, .layui-panel, .layui-quote-nm, .layui-select, .layui-tab-bar, .layui-tab-card, .layui-tab-title, .layui-tab-title .layui-this:after, .layui-textarea{
+    border-color: var(--border-color-4);
+}
+
+.layui-table-click, .layui-table-hover, .layui-table[lay-even] tbody tr:nth-child(even){
+    background-color: rgba(0, 178, 255, .06);
+}
+
+.layui-input, .layui-select, .layui-textarea{
+    background: rgba(255,255,255,.03);
+    color: var(--border-color-2);
+}
+
+.layui-input:focus, .layui-textarea:focus{
+    border-color: var(--theme-color-2) !important;
+}
+
+.layui-input:hover, .layui-textarea:hover{
+    border-color: var(--theme-color-2) !important;
+}
+
+.layui-form-checkbox[lay-skin=primary]>i{
+    background: transparent;
+}
+
+.layui-form-checked[lay-skin=primary]>i{
+    background-color: #16b777;
+}
+
+.layui-form-select .layui-edge{
+    border-top-color: var(--theme-color-2);
+}
+
+.layui-form-select dl{
+    background: var(--theme-bg-1);
+    border: 1px solid var(--border-color-4);
+}
+
+.layui-form-select dl dd.layui-this{
+    background-color: rgba(0, 178, 255, .16);
+}
+
+.layui-form-select dl dd:hover{
+    background-color: rgba(0, 178, 255, .16);
+}
+
+.layui-form-select dl dd.layui-disabled{
+    background-color: transparent;
+    color: var(--border-color-4) !important;
+}
+
+.layui-form-select{
+    color: var(--border-color-2);
+}
+
+.layui-tab-brief>.layui-tab-title .layui-this{
+    color: rgba(255,255,255, 1);
+}
+
+.layui-tab .layui-tab-title li:hover{
+    color: rgba(255,255,255, 1);
+}
+
+.layui-tab-bar{
+    background-color: #19222C;
+    opacity: .9;
+}
+
+.layui-tab-bar:hover{
+    background-color: #19222C;
+    opacity: 1;
+}
+
+.layui-input-wrap .layui-input-number .layui-icon-up{
+    border-bottom: 1px solid var(--border-color-4);
+}
+
+.layui-input-affix .layui-icon{
+    color: var(--border-color-2);
+}
+
+.layui-input-affix .layui-icon:hover{
+    color: var(--theme-color-1);
+}
+
+.el-notification{
+    background: var(--popUpBox-bg-1);
+    border: 0;
+    box-shadow: var(--card-boxShadow);
+}
+
+.el-notification__title{
+    color: var(--border-color-1);
+}
+
+.el-notification__content{
+    color: var(--border-color-2);
+}
+
+.el-notification__closeBtn:hover{
+    color: #ffffff;
+}
+
+.layui-btn{
+    color: var(--border-color-2);
+}
+
+.layui-btn-primary{
+    color: var(--border-color-2);
+    border-color: var(--border-color-4);
+}
+
+.layui-btn-primary:hover{
+    color: var(--theme-color-1) !important;
+    border-color: var(--theme-color-1);
+}
+
+.layui-btn-disabled, .layui-btn-disabled:active, .layui-btn-disabled:hover{
+    border: 1px solid var(--border-color-4);
+    border-color: var(--border-color-4) !important;
+    background-color: #232324 !important;
+}
+
+.layui-input[disabled], .layui-textarea[disabled]{
+    border: 1px solid var(--border-color-4);
+    border-color: var(--border-color-4) !important;
+    background-color: #232324 !important;
+    cursor: no-drop;
+}
+
+.el-progress__text{
+    color: var(--border-color-2) !important;
+}
+
+.el-progress .el-progress-circle__track{
+    stroke: #606266;
+}
+
+.el-progress .el-progress-circle__path{
+    stroke: var(--theme-color-1);
+}
+
+.el-card{
+    background: var(--card-bg);
+    border: 0;
+    color: var(--border-color-2);
+}
+
+.el-collapse{
+    border-top: 1px solid var(--border-color-4);
+    border-bottom: 1px solid var(--border-color-4);
+}
+
+.el-collapse-item__wrap{
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color-4);
+}
+
+.el-collapse-item__header{
+    background: var(--card-bg);
+    color: var(--border-color-2);
+    border-bottom: 1px solid var(--border-color-4);
+}
+
+.el-input__inner{
+    background: transparent;
+    color: var(--border-color-2);
+    border: 1px solid var(--border-color-4);
+}
+
+.el-input__inner:hover{
+    border-color: var(--theme-color-1);
+}
+
+.el-select:hover .el-input__inner{
+    border-color: var(--theme-color-1);
+}
+
+.el-select-dropdown{
+    border: 1px solid var(--border-color-4);
+    background-color: var(--theme-bg-1);
+    background: var(--theme-bg-1);
+}
+
+.el-select-dropdown__item{
+    color: var(--border-color-2);
+}
+
+.el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
+    color: var(--theme-color-2);
+    background: rgba(0, 178, 255, .16);
+}
+
+.el-select-dropdown__item.selected{
+    color: var(--theme-color-2);
+    background: rgba(0, 178, 255, .16);
+}
+
+.el-popper[x-placement^=bottom] .popper__arrow::after{
+    border-bottom-color: #202020;
+}
+
+.el-popper[x-placement^="bottom"] .popper__arrow{
+    border-bottom-color: #202020;
+}
+
+.el-radio{
+    color: var(--text-color-1);
+}
+
+.el-radio.is-bordered{
+    border-color: var(--border-color-4);
+}
+
+.el-radio__inner{
+    border: 1px solid var(--border-color-4);
+    background-color: var(--border-color-2);
+}
+
+.el-tree{
+    background: transparent;
+    color: var(--border-color-2);
+}
+
+.el-tree-node__content:hover, .el-upload-list__item:hover{
+    background: rgba(0, 178, 255, .16);
+    color: var(--theme-color-2);
+}
+
+.el-tree-node:focus>.el-tree-node__content{
+    background: rgba(0, 178, 255, .16);
+    color: var(--theme-color-2);
+}
+
+.el-alert--info.is-light{
+    background-color: #202121;
+    color: #909399;
+}
+
+#onlineStoreBody{
+    background: url('/assets/images/login_banner_dark.jpg') 50% fixed no-repeat;
+    background-size: cover;
+}
+
+#onlineStoreBody #app>.layui-panel{
+    box-shadow: var(--card-boxShadow) !important;
+}
+
+/*登录页*/
+#loginPage{
+    background: url('/assets/images/login_banner_dark.jpg') 50% fixed no-repeat;
+}
+
+#loginPage .login-box{
+    background: var(--theme-bg-1);
+    color: var(--theme-color-2);
+    box-shadow: var(--card-boxShadow);
+}
+
+#loginPage .login-box .loginB{
+    background: var(--card-bg);
+    color: var(--theme-color-2);
+    border: 1px solid var(--border-color-4);
+}
+
+#loginPage .login-box .loginBS{
+    background: var(--theme-color-2) !important;
+}
+

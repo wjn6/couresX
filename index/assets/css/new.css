@@ -1,0 +1,40 @@
+.appLayTable {
+    margin: 0;
+    width: max-content;
+}
+
+.appLayTable tr {
+    text-align: center;
+}
+
+.appLayTable td {
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.appLayTable td:hover {
+    background: #f8f8f8;
+    color: #333 !important;
+}
+
+.appLayTable td:hover span {
+    color: #333 !important;
+}
+
+.appLayTable td i {
+    flex: auto;
+}
+
+.appLayTable td .icon {
+    height: 18px;
+}
+.appLayTable td .text {
+    height: 18px;
+}
