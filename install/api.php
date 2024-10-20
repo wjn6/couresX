@@ -4,7 +4,7 @@ $act = $_GET['act'] ?? '';
 
 include_once('../Checkorder/configuration.php');
 
-$version = '2.0.0.4';
+$version = '2.0.0.5';
 
 $host = $_SERVER['HTTP_HOST'];
 
