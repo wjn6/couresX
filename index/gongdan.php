@@ -47,11 +47,22 @@ require_once('head.php');
                     <el-input v-model="form.title"></el-input>
                 </el-form-item>
 
+                <el-form-item v-if="form.region == '订单问题'" label="订单绑定" prop="title">
+                    <el-select v-model="form.oid" placeholder="请选择订单.." :teleported="false" :popper-append-to-body="false" style="width:180px;">
+                        <?php
+                        $a = $DB->query("select oid,user,kcname from qingka_wangke_order where uid='{$userrow['uid']}' order by oid desc ");
+                        while ($row = $DB->fetch($a)) {
+                            echo '<el-option label="[' . $row['oid'] . '] '. $row['user'] .' '. $row['kcname'] .'" value="' . $row['oid'] . '"></el-option>';
+                        }
+                        ?>
+                    </el-select>
+                </el-form-item>
+
                 <el-form-item label="工单内容">
                     <el-input type="textarea" :autosize="{ minRows: 6, maxRows: 10}" v-model="form.content" placeholder="请按照格式填写！"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submit">提交工单</el-button>
+                    <!--<el-button type="primary" @click="submit">提交工单</el-button>-->
                     <!--<el-button @click="show = !show">取消</el-button>-->
                 </el-form-item>
             </el-form>
@@ -137,6 +148,9 @@ require_once('head.php');
                         <!--{{now_gongdan.answer}}-->
                         <div style="display: flex; flex-direction: column; height: 100%;">
                             <ul class="layui-padding-3" style="flex: 1; overflow: auto; overflow-y: auto;" id="huifuT_content_id">
+                                <div v-if="now_gongdan.oid" class="layui-font-12 layui-font-green" style="position: absolute; z-index: 10; background: #fff; width: -webkit-fill-available; left: 0; top: 0; padding: 3px 9px;">
+                                    当前绑定订单：{{ `${now_gongdan.oidInfo.user} ${now_gongdan.oidInfo.kcname} ${now_gongdan.oidInfo.ptname}` }}
+                                </div>
                                 <li v-for="(item,index) in now_gongdan.answer" :key="index" style="display: inline-block; width: 100%;margin-bottom: 10px;" :style="{textAlign:item.uid === '1'?'left':'right'}">
                                     <div style="margin : 0 0 2px;">
                                         {{item.uid === '1' ?'官方':'我'}}
@@ -203,6 +217,7 @@ require_once('head.php');
                     title: '',
                     content: '',
                     region: '',
+                    oid: '',
                 },
                 rules: {
                     region: [{
@@ -226,6 +241,8 @@ require_once('head.php');
                     state: '',
                     gid: '',
                     answer: [],
+                    oid: '',
+                    oidInfo: {},
                     uid: '',
                     time: 0,
 
@@ -237,25 +254,45 @@ require_once('head.php');
         mounted() {
             const _this = this;
             _this.get();
+            
+            console.log("getUrlParams()",_this.getUrlParams())
+            
             if (_this.getUrlParams().region) {
                 $(document).ready(function() {
                     setTimeout(() => {
                         vm.tjgdID_open();
                     }, 300)
+                    
+                    
+                    
                 })
                 _this.form.region = _this.getUrlParams().region;
             }
         },
         methods: {
             tjgdID_open() {
+                const _this = this;
                 layui.use(function() {
                     layer.open({
                         id: 'tjgdID',
                         type: 1,
                         title: '提交工单',
                         area: ['360px'],
-                        hideOnClose: true,
-                        content: $("#tjgdID")
+                        content: $("#tjgdID"),
+                        btn: ["提交工单","取消"],
+                        yes(){
+                            _this.submit();
+                        },
+                        end(){
+                            console.log("关闭")
+                            _this.form = {
+                                title: '',
+                                content: '',
+                                region: '',
+                                oid: '',
+                            }
+                            
+                        },
                     })
                 })
             },
@@ -313,6 +350,8 @@ require_once('head.php');
                 _this.now_gongdan.state = _this.row.data.find(r => r.gid === command.gid).state;
                 _this.now_gongdan.title = _this.row.data.find(r => r.gid === command.gid).title;
                 _this.now_gongdan.region = _this.row.data.find(r => r.gid === command.gid).region;
+                _this.now_gongdan.oid = _this.row.data.find(r => r.gid === command.gid).oid;
+                _this.now_gongdan.oidInfo = _this.row.data.find(r => r.gid === command.gid).oidInfo;
                 // var load = layer.load();
                 data = {
                     list: _this.list
@@ -524,6 +563,7 @@ require_once('head.php');
                     title: _this.form.title,
                     region: _this.form.region,
                     content: _this.form.content,
+                    oid: _this.form.oid,
                     time: Date.now(),
                     uid: <?= $userrow['uid'] ?>,
                 }).then(r => {
@@ -534,7 +574,7 @@ require_once('head.php');
                         // 		_this.show = !_this.show;
                         layer.closeAll()
                     } else {
-                        _this.$message.error(r.data.msg);
+                        _this.$message.error(r.data.msg?r.data.msg:"提交失败");
                     }
                 });
             },

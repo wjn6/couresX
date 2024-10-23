@@ -61,14 +61,14 @@ include_once('head.php');
     #listTable .layui-input-suffix {
         padding: 0 3px;
     }
-    
-    #listTable_new .el-table__body .el-table__row .el-table__cell .cell{
+
+    #listTable_new .el-table__body .el-table__row .el-table__cell .cell {
         width: 118px;
         white-space: normal;
         overflow-y: auto;
         max-height: 70px;
     }
-    
+
     #listTable_new .layui-input {
         height: 27px !important;
     }
@@ -382,35 +382,45 @@ include_once('head.php');
                             </tr>
                         </tbody>
                     </table>
-                    
-                    <!--代理端表格-->
-                    <table v-if="!uid" id="listTable_user" lay-filter="listTable_user"></table>
-                    
+
                     <!--管理端表格-->
-                    <el-table id="listTable_new" ref="listTable_new" v-if="uid" :data="row.data" size="small" stripe
+                    <el-table v-if="uid" id="listTable_new" ref="listTable_new" :data="row.data" size="small" stripe
                         border show-overflow-tooltip empty-text="暂无订单" style="width: 100%;"
                         :row-style="{'max-height': '70px'}" @selection-change="listTable_new_select">
-                        
+
                         <el-table-column fixed="left" type="selection" width="28" align="center"></el-table-column>
-                        <el-table-column fixed="right" prop="hid" label="操作" width="100" align="center" >
+                        <el-table-column fixed="right" prop="hid" label="主控" width="100" align="center">
                             <template #default="scope">
-                                <div style="line-height: normal; scale: .8; transform-origin: left;">关联代理:{{scope.row.uid}}</div>
-                                <el-dropdown trigger="click" split-button type="primary" size="small" @click.stop="bs(scope.row.oid)">
+                                <div style="line-height: normal; scale: .8; transform-origin: left;">
+                                    关联代理:{{scope.row.uid}}</div>
+                                <el-dropdown trigger="click" split-button type="primary" size="small"
+                                    @click.stop="bs(scope.row.oid)">
                                     补刷
                                     <template #dropdown>
                                         <el-dropdown-menu style="width:150px">
                                             <el-dropdown-item>
-                                                <p style="margin: 0;" @click="up(scope.row.oid)"><el-icon style="margin: 2px;"><Connection /></el-icon>刷新/同步</p>
+                                                <p style="margin: 0;" @click="up(scope.row.oid)"><el-icon
+                                                        style="margin: 2px;">
+                                                        <Connection />
+                                                    </el-icon>刷新/同步</p>
                                             </el-dropdown-item>
                                             <el-dropdown-item>
-                                                <div style="margin: 0;" @click="ddinfo(scope.row)"><el-icon style="margin: 2px;"><search /></el-icon>查看详细</div>
+                                                <div style="margin: 0;" @click="ddinfo(scope.row)"><el-icon
+                                                        style="margin: 2px;">
+                                                        <search />
+                                                    </el-icon>查看详细</div>
                                             </el-dropdown-item>
-                                            <el-dropdown-item>
-                                                <p style="margin: 0;" @click="sex=[scope.row.oid];sc()"><el-icon style="margin: 2px;"><Delete /></el-icon>删除订单</p>
+                                            <el-dropdown-item divided>
+                                                <p style="margin: 0;" @click="copyT(`${scope.row.school=='自动识别'?'':scope.row.school} ${scope.row.user} ${scope.row.pass}`)">
+                                                    <el-icon style="margin: 2px;">
+                                                        <Document-Copy />
+                                                    </el-icon>复制账号信息
+                                                </p>
                                             </el-dropdown-item>
                                             <el-dropdown-item disabled divided>修改关联代理(转单)</el-dropdown-item>
-                                            <el-dropdown-item >
-                                                <el-select size="small" filterable v-model="scope.row.uid" placeholder="请选择代理"
+                                            <el-dropdown-item>
+                                                <el-select size="small" filterable v-model="scope.row.uid"
+                                                    placeholder="请选择代理"
                                                     @change="xgdl_value=$event;sex=[scope.row.oid];xgdl_get()">
                                                     <el-option v-for="item in dl_idname" :key="item.uid"
                                                         :label="`[${item.uid}]${item.name}`" :value="item.uid"
@@ -422,7 +432,7 @@ include_once('head.php');
                                 </el-dropdown>
                             </template>
                         </el-table-column>
-                        
+
                         <el-table-column prop="ptname" label="商品" width="120">
                             <template #default="scope">
                                 <div style="white-space: normal;">
@@ -454,7 +464,8 @@ include_once('head.php');
                         </el-table-column>
                         <el-table-column prop="status" label="任务/对接状态" width="100" align="center">
                             <template #default="scope">
-                                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <div
+                                    style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                     <div style="width: 70px;">
                                         <el-button v-if="scope.row.status=='待处理'" type="warning" size="small">
                                             <el-icon>
@@ -583,10 +594,11 @@ include_once('head.php');
                                     <div style="width: 70px;">
                                         <el-button style="width: 100%;" @click="duijie(scope.row.oid)"
                                             v-if="scope.row.dockstatus==0" type="" size="small">等待对接</el-button>
-                                        <el-button style="width: 100%;" v-else-if="scope.row.dockstatus==1" type="success"
-                                            size="small">成功对接</el-button>
+                                        <el-button style="width: 100%;" v-else-if="scope.row.dockstatus==1"
+                                            type="success" size="small">成功对接</el-button>
                                         <el-button style="width: 100%;" @click="duijie(scope.row.oid)"
-                                            v-else-if="scope.row.dockstatus==2" type="danger" size="small">对接失败</el-button>
+                                            v-else-if="scope.row.dockstatus==2" type="danger"
+                                            size="small">对接失败</el-button>
                                         <el-button style="width: 100%;" v-else-if="scope.row.dockstatus==3" type="info"
                                             size="small">重复对接</el-button>
                                         <el-button style="width: 100%;" v-else-if="scope.row.dockstatus==4" type="info"
@@ -623,29 +635,6 @@ include_once('head.php');
                                 </div>
                             </template>
                         </el-table-column>
-                        <!--<el-table-column prop="oid" label="<?php if ($userrow['uid'] == 1) { ?>详细/<?php } ?>刷新/补刷"-->
-                        <!--    width="105" align="center">-->
-                        <!--    <template #default="scope">-->
-                        <!--        <el-button v-if="uid" style="margin-left: 0;" type="primary" size="small" circle-->
-                        <!--            @click="ddinfo(scope.row)">-->
-                        <!--            <el-icon>-->
-                        <!--                <search />-->
-                        <!--            </el-icon>-->
-                        <!--        </el-button>-->
-                                <!--刷新按钮-->
-                        <!--        <el-button type="success" style="margin-left: 0;" size="small" circle-->
-                        <!--            @click="up(scope.row.oid)">-->
-                        <!--            <el-icon><refresh-left /></el-icon>-->
-                        <!--        </el-button>-->
-                                <!--补刷按钮-->
-                        <!--        <el-button type="warning" style="margin-left: 0;" size="small" circle-->
-                        <!--            @click="bs(scope.row.oid)">-->
-                        <!--            <el-icon>-->
-                        <!--                <promotion />-->
-                        <!--            </el-icon>-->
-                        <!--        </el-button>-->
-                        <!--    </template>-->
-                        <!--</el-table-column>-->
                         <el-table-column prop="process" label="参考进度" width="65" align="center">
                             <template #default="scope">
                                 <template
@@ -714,6 +703,230 @@ include_once('head.php');
                                 </template>
                             </template>
                         </el-table-column>
+
+                    </el-table>
+
+                    <!--代理端表格-->
+                    <el-table v-else id="listTable_new_user" ref="listTable_new_user" :data="row.data" size="small"
+                        stripe border show-overflow-tooltip empty-text="暂无订单" style="width: 100%;"
+                        @selection-change="listTable_new_select">
+
+                        <el-table-column fixed="left" type="selection" width="28" align="center"></el-table-column>
+                        <el-table-column fixed="right" prop="hid" label="主控" width="100" align="center">
+                            <template #default="scope">
+                                <el-dropdown trigger="click" split-button type="primary" size="small"
+                                    @click.stop="bs(scope.row.oid)">
+                                    补刷
+                                    <template #dropdown>
+                                        <el-dropdown-menu style="width:150px">
+                                            <el-dropdown-item>
+                                                <p style="margin: 0;" @click="up(scope.row.oid)">
+                                                    <el-icon style="margin: 2px;">
+                                                        <Connection />
+                                                    </el-icon>刷新/同步
+                                                </p>
+                                            </el-dropdown-item>
+                                            <el-dropdown-item>
+                                                <div style="margin: 0;" @click="ddinfo(scope.row)">
+                                                    <el-icon style="margin: 2px;">
+                                                        <search />
+                                                    </el-icon>查看详细</div>
+                                            </el-dropdown-item>
+                                            <el-dropdown-item divided>
+                                                <p style="margin: 0;" @click="sex=[scope.row.oid];gd()">
+                                                    <i class="layui-icon layui-icon-survey" style="margin: 2px;"></i>发起工单
+                                                </p>
+                                            </el-dropdown-item>
+                                            <el-dropdown-item divided>
+                                                <p style="margin: 0;" @click="copyT(`${scope.row.school=='自动识别'?'':scope.row.school} ${scope.row.user} ${scope.row.pass}`)">
+                                                    <el-icon style="margin: 2px;">
+                                                        <Document-Copy />
+                                                    </el-icon>复制账号信息
+                                                </p>
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column prop="ptname" label="商品" width="120">
+                            <template #default="scope">
+                                {{scope.row.ptname}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="school" label="学校" width="125">
+                            <template #default="scope">
+                                {{scope.row.school}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="user" label="账号" width="105">
+                            <template #default="scope">
+                                {{scope.row.user}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="pass" label="密码" width="105">
+                            <template #default="scope">
+                                {{scope.row.pass}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="kcname" label="课程名称" width="130">
+                        </el-table-column>
+                        <el-table-column prop="status" label="任务状态" width="100" align="center">
+                            <template #default="scope">
+                                <div
+                                    style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                    <div style="width: 70px;">
+                                        <el-button v-if="scope.row.status=='待处理'" type="warning" size="small">
+                                            <el-icon>
+                                                <Clock />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='待上号'" type="warning" size="small">
+                                            <el-icon>
+                                                <Clock />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='排队中'" type="warning" size="small">
+                                            <el-icon class="is-loading">
+                                                <Loading />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='已暂停'" type="warning" size="small">
+                                            <el-icon><Video-Pause /></el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='已完成'" type="success" size="small">
+                                            <el-icon><Circle-Check /></el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='已考试'" type="success" size="small">
+                                            <el-icon><Circle-Check /></el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='异常'" type="danger" size="small">
+                                            <el-icon>
+                                                <Warning />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='失败'" type="danger" size="small">
+                                            <el-icon>
+                                                <Warning />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='密码错误'" type="danger" size="small">
+                                            <el-icon>
+                                                <Warning />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='已提取'" type="primary" size="small">
+                                            <el-icon>
+                                                <Upload />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='已提交'" type="primary" size="small">
+                                            <el-icon>
+                                                <Upload />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='进行中'" type="primary" size="small">
+                                            <el-icon class="is-loading">
+                                                <Loading />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='上号中'" type="primary" size="small">
+                                            <el-icon class="is-loading">
+                                                <Loading />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='考试中'" type="primary" size="small">
+                                            <el-icon class="is-loading">
+                                                <Loading />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='队列中'" type="primary" size="small">
+                                            <el-icon class="is-loading">
+                                                <Loading />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='待考试'" type="primary" size="small">
+                                            <el-icon>
+                                                <Clock />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='正在考试'" type="primary" size="small">
+                                            <el-icon class="is-loading">
+                                                <Loading />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='平时分'" type="primary" size="small">
+                                            <el-icon class="is-loading">
+                                                <Loading />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='作业中'" type="primary" size="small">
+                                            <el-icon class="is-loading">
+                                                <Loading />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='补刷中'" type="info" size="small">
+                                            <el-icon class="is-loading">
+                                                <Loading />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='已退单'" type="info" size="small">
+                                            <el-icon>
+                                                <Warning />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='已退款'" type="info" size="small">
+                                            <el-icon>
+                                                <Warning />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='待支付'" type="info" size="small">
+                                            <el-icon>
+                                                <Warning />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='待审核'" type="info" size="small">
+                                            <el-icon>
+                                                <Warning />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else-if="scope.row.status=='点我接码'" type="danger" size="small"
+                                            icon="el-icon-thumb" @click="jiema">
+                                            <el-icon>
+                                                <Clock />
+                                            </el-icon>{{scope.row.status}}
+                                        </el-button>
+                                        <el-button v-else size="small">
+                                            {{scope.row.status}}
+                                        </el-button>
+                                    </div>
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="process" label="参考进度" width="65" align="center">
+                            <template #default="scope">
+                                <template
+                                    v-if="( process_num(scope.row.process)?process_num(scope.row.process):(scope.row.status.search(/已完成|已经完成|已经全部完成/)!= -1?100:0) )==100">
+                                    <el-progress width="50" stroke-width="3" type="circle"
+                                        :percentage="process_num(scope.row.process)?process_num(scope.row.process):(scope.row.status.search(/已完成|已经完成|已经全部完成/)!= -1?100:0)"></el-progress>
+                                </template>
+                                <template v-else>
+                                    <el-progress width="50" stroke-width="3" type="circle"
+                                        :percentage="process_num(scope.row.process)?process_num(scope.row.process):(scope.row.status.search(/已完成|已经完成|已经全部完成/)!= -1?100:0)"></el-progress>
+                                </template>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="remarks" label="日志" width="200">
+                            <template #default="scope">
+                                {{scope.row.remarks?scope.row.remarks:'已完成：'+(
+                                    process_num(scope.row.process)?process_num(scope.row.process):(scope.row.status.search(/已完成|已经完成|已经全部完成/)!=
+                                    -1?100:0) )+'%'}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="addtime" label="提交时间" width="150" align="center"></el-table-column>
+                        <el-table-column prop="uptime" label="更新时间" width="150" align="center"></el-table-column>
+                        <el-table-column prop="fees" label="扣费" width="80" align="center"></el-table-column>
 
                     </el-table>
 
@@ -1145,16 +1358,20 @@ include_once('head.php');
                         style="color: red;">&nbsp;秒刷</span>
                 </li>
                 <li class="list-group-item" style="word-break:break-all;">
-                    <b>账号信息：</b>{{ddinfo3.info.school}}&nbsp;{{ddinfo3.info.user}}&nbsp;{{ddinfo3.info.pass}}</li>
+                    <b>账号信息：</b>{{ddinfo3.info.school}}&nbsp;{{ddinfo3.info.user}}&nbsp;{{ddinfo3.info.pass}}
+                </li>
                 <li class="list-group-item"><b>课程名字：</b>{{ddinfo3.info.kcname}}</li>
                 <li class="list-group-item" v-if="ddinfo3.info.name!='null'"><b>学生姓名：</b>{{ddinfo3.info.name}}</li>
                 <li class="list-group-item"><b>下单时间：</b>{{ddinfo3.info.addtime}}</li>
                 <li class="list-group-item" v-if="ddinfo3.info.courseStartTime">
-                    <b>课程开始时间：</b>{{ddinfo3.info.courseStartTime}}</li>
+                    <b>课程开始时间：</b>{{ddinfo3.info.courseStartTime}}
+                </li>
                 <li class="list-group-item" v-if="ddinfo3.info.courseEndTime">
-                    <b>课程结束时间：</b>{{ddinfo3.info.courseEndTime}}</li>
+                    <b>课程结束时间：</b>{{ddinfo3.info.courseEndTime}}
+                </li>
                 <li class="list-group-item" v-if="ddinfo3.info.examStartTime">
-                    <b>考试开始时间：</b>{{ddinfo3.info.examStartTime}}</li>
+                    <b>考试开始时间：</b>{{ddinfo3.info.examStartTime}}
+                </li>
                 <li class="list-group-item" v-if="ddinfo3.info.examEndTime"><b>考试结束时间：</b>{{ddinfo3.info.examEndTime}}
                 </li>
                 <li class="list-group-item"><b>订单状态：</b><span
@@ -1176,7 +1393,7 @@ include_once('head.php');
                     process_num(ddinfo3.info.process)?process_num(ddinfo3.info.process):(
                     ddinfo3.info.status?(ddinfo3.info.status.search(/已完成|已经完成|已经全部完成/)!= -1?100:0):0 ) )+'%'}}
                 </li>
-                <li class="list-group-item" v-if="ddinfo3.info.status!='已取消'">
+                <li class="list-group-item" v-if="ddinfo3.info.status!='已取消' && uid">
                     <b>操作：</b>
                     <button @click="ms(ddinfo3.info.oid)" v-if="false" class="btn btn-xs btn-danger">秒刷</button>&nbsp;
                     <button v-if="false" @click="layer.msg('更新中，近期开放')" class="btn btn-xs btn-info">修改密码</button>&nbsp;
@@ -1972,6 +2189,46 @@ include_once('head.php');
                             _this.$message.error(data.msg);
                         }
                     });
+                });
+            },
+            // 快捷提交工单
+            gd() {
+                const _this = this;
+                if (_this.sex == '') {
+                    _this.$message.error("请先选择订单！");
+                    return false;
+                }
+                
+                console.log(_this.row.data.find(i=>i.oid == _this.sex[0]))
+                let thisOrder = _this.row.data.find(i=>i.oid == _this.sex[0]);
+                if(!thisOrder){
+                    _this.$message.error("未匹配到订单！");
+                    return false;
+                }
+                let default_text = `账号信息：\r\n${thisOrder["school"]} ${thisOrder["user"]} ${thisOrder["pass"]}\r\n课程：${thisOrder["kcname"]}\r\n----------------------------------------\r\n问题描述：\r\n`;
+                layer.prompt({ title: `请描述您的问题`, formType: 2,btn:["提交工单","取消"], area:["330px","300px"], value: default_text , }, function (value, index, elem) {
+                    if (value === '') {
+                        _this.$message.error("请输入问题");
+                        return elem.focus()
+                    };
+                    let loading = layer.load();
+                    axios.post("/gd.php?act=addgd",{
+                        title: `订单【${_this.sex[0]}】`,
+                        region: "订单问题",
+                        content: value,
+                        time: Date.now(),
+                        oid: _this.sex[0],
+                    }).then(r=>{
+                        layer.close(loading);
+                        if (r.data.code == 1) {
+                            _this.$message.success("提交成功，请访问【订单管理】页进一步咨询");
+                        }else{
+                            _this.$message.error(r.data.msg?r.data.msg:"提交失败");
+                        }
+                    })
+                    
+                    // 关闭 prompt
+                    layer.close(index);
                 });
             },
             xgdl: function (sex) {

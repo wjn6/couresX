@@ -261,6 +261,8 @@ hr{
 
 .el-message{
     z-index: 9999999999999999999999999999999999999 !important;
+    max-width: max-width: calc(100vw - 5px);
+    width: max-content;
 }
 
 .el-descriptions__content{

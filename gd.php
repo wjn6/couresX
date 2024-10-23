@@ -27,40 +27,18 @@ switch ($act) {
         $content = trim(strip_tags(daddslashes($_POST['content'])));
         $addtime =trim(strip_tags(daddslashes($_POST['time'])));
         $uid = trim(strip_tags(daddslashes($_POST['uid'])));
+        $oid = trim(strip_tags(daddslashes($_POST['oid'])));
         
         if ($title == "" || $region == "" || $content == "") {
             exit('{"code":-1,"msg":"务必保证每项不能为空"}');
         }
         $new_content = $content .''. 'ô' .''. $addtime .''. '^';
         
-        $DB->query("insert into qingka_wangke_gongdan (title,region,content,uid,state,addtime) values ('$title','$region','$new_content','{$userrow['uid']}','待回复','$addtime')");
+        $DB->query("insert into qingka_wangke_gongdan (title,region,content,uid,oid,state,addtime) values ('$title','$region','$new_content','{$userrow['uid']}','{$oid}','待回复','$addtime')");
          
         $b = $DB->get_row("select * from qingka_wangke_gongdan where addtime='$addtime'");
         $b_uid = $b['uid'];
         $c = $DB->get_row("select * from qingka_wangke_user where uid='$b_uid'");
-        
-        //  $options = array(
-        //     'http' => array(
-        //       'method' => 'POST',
-        //      'header' => 'Content-type:application/x-www-form-urlencoded',
-        //      'content' => http_build_query(
-        //              array(
-        //                  'j_uid' => 1 ,
-        //                  'title' => '☪ 有人提交了新工单',
-        //                  'content' =>  '
-        //                     <h1>有人提交了新工单</h1>
-        //                     <hr />
-        //                     <p><b>UID：</b>'. $b['uid'] .'<br /><b>账号：</b>'.$c['user'].'<br /><b>昵称：</b>'.$c['name'].'</p>
-        //                     <p><b>工单标题：</b>' . $b['title'] . '</p>
-        //                     <p><b>工单分类：</b>' . $b['region'] . '</p>
-        //                     <p><b>工单内容：</b>' . $content . '</p>' . DateTime::createFromFormat('U.u', microtime(true))->setTimezone(new DateTimeZone('Asia/Shanghai'))->format("Y-m-d H:i:s--u"),
-        //             )
-        //          ),
-        //       'timeout' => 15 * 60 // 超时时间（单位:s）
-        //     )
-        //   );
-        //   $context = stream_context_create($options);
-        //   $result = file_get_contents('https://'.$host.'/PHPMailer/fs.php', false, $context);
         
         exit('{"code":1,"msg":"提交成功！"}');
     break;
@@ -78,13 +56,30 @@ switch ($act) {
         $data= [];
         $a = $DB->query("select * from qingka_wangke_gongdan {$sql1} order by gid desc");
         while ($row = $DB->fetch($a)) {
+            
+            $oidInfo = [
+                "oid" => "",
+                "user" => "",
+                "kcname" => "",
+            ];
+            $order = $DB->get_row("select oid,user,kcname,ptname from qingka_wangke_order where oid = '{$row['oid']}'" );
+            if(!empty($order)){
+                $oidInfo["oid"] = $order["oid"];
+                $oidInfo["user"] = $order["user"];
+                $oidInfo["kcname"] = $order["oid"];
+                $oidInfo["ptname"] = $order["ptname"];
+            }
+            
+            $row["oidInfo"] = $oidInfo;
+            
             $data[] = $row;
         }
+        
         $data = array('code' => 1, 'data' => $data);
         exit(json_encode($data));
     break;
     case 'shan':
-        admin();
+        is_admin();
         $gid = trim(strip_tags(daddslashes($_POST['gid'])));
         $b = $DB->get_row("select * from qingka_wangke_gongdan where gid='{$gid}'");
         if ($userrow['uid'] != $b['uid'] && $userrow['uid'] != '1') {

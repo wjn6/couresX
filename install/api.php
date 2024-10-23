@@ -3,8 +3,9 @@
 $act = $_GET['act'] ?? ''; 
 
 include_once('../Checkorder/configuration.php');
+include_once('../confing/authcodeClass.php');
 
-$version = '2.0.0.5';
+$version = '2.0.0.6';
 
 $host = $_SERVER['HTTP_HOST'];
 
@@ -187,6 +188,7 @@ switch ($act) {
       'qingka_wangke_gongdan' => array(
         'gid' => 'INT(11) AUTO_INCREMENT PRIMARY KEY',
         'uid' => 'INT(3)',
+        'oid' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci COMMENT "绑定订单号" ',
         'region' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci COMMENT "工单类型" ',
         'title' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci COMMENT "工单标题" ',
         'content' => 'VARCHAR(6666) COLLATE utf8mb4_unicode_ci COMMENT "工单内容" ',
