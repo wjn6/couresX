@@ -36,7 +36,8 @@
 		    CourseX Template | Installer <br >已开源
 		 </h2>
 	</div>
-	<div class="layui-padding-2" id="installID" style="display:none;":style="{paddingTop: $('#hT').innerHeight()+'px !important'}">
+	<div class="layui-padding-2" id="installID" :style="{paddingTop: $('#hT').innerHeight()+'px !important'}">
+				
 		<div class="" style="display: flex; justify-content: center;">
 			<div class="layui-card layui-padding-2" style="width:100%;max-width:750px;">
 				<div>

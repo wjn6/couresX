@@ -7,7 +7,7 @@ function watermark(t1, t2, t3) {
   var coumnNumber = Math.ceil((maxHeight - 40 - 80) / intervalheight);
   var defaultSettings = {
     watermark_color: "#aaa",
-    watermark_alpha: 0.4,
+    watermark_alpha: 0.25,
     watermark_fontsize: "15px",
     watermark_font: "微软雅黑",
     watermark_width: 200,
