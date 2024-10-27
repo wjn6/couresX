@@ -564,25 +564,6 @@ switch ($act) {
             'jrjd' => $jrjd
         );
 
-        // 公告，仅取10条
-        $DB->query("update qingka_wangke_homenotice SET readUIDS = CONCAT(readUIDS, '{$userrow['uid']},') where readUIDS NOT LIKE '%{$userrow['uid']},%' ");
-        $homenotice1 = $DB->query(" select sort,title,content,top,author,uptime,addtime,readUIDS from qingka_wangke_homenotice where status!=0 order by sort desc limit 10");
-        while ($row = $DB->fetch($homenotice1)) {
-            if ($row['name'] == '' || $row['name'] == 'undefined') {
-                $row['name'] = 'null';
-            }
-
-
-            if (empty($row["readUIDS"])) {
-                $row["readUIDS"] = 0;
-            } else {
-                $row["readUIDS"] = explode(",", $row["readUIDS"]);
-                $row["readUIDS"] = count($row["readUIDS"]) - 1;
-            }
-
-            $homenotice[] = $row;
-        }
-
 
         $data = array(
             'code' => 1,
@@ -3299,6 +3280,31 @@ switch ($act) {
         }
 
         exit(json_encode(["code" => 1, "data" => $data]));
+        break;
+        // 获取首页实时公告
+    case "homenotice_get":
+        // 仅取10条
+        $DB->query("update qingka_wangke_homenotice SET readUIDS = CONCAT(readUIDS, '{$userrow['uid']},') where readUIDS NOT LIKE '%{$userrow['uid']},%' ");
+        
+        $homenotice_return = $DB->query(" select sort,title,content,top,author,uptime,addtime,readUIDS from qingka_wangke_homenotice where status!=0 order by sort desc limit 10");
+        $homenotice = [];
+        while ($row = $DB->fetch($homenotice_return)) {
+            if ($row['name'] == '' || $row['name'] == 'undefined') {
+                $row['name'] = 'null';
+            }
+
+
+            if (empty($row["readUIDS"])) {
+                $row["readUIDS"] = 0;
+            } else {
+                $row["readUIDS"] = explode(",", $row["readUIDS"]);
+                $row["readUIDS"] = count($row["readUIDS"]) - 1;
+            }
+
+            $homenotice[] = $row;
+        }
+        
+        jsonReturnData(1,$homenotice);
         break;
 }
 $DB->close();

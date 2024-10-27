@@ -1453,14 +1453,6 @@ $real_ip = real_ip();
     // -----------------------------
 </script>
 
-<!--水印开关-->
-<?php if ($conf['sykg'] == 1) { ?>
-    <script src="assets/js/sy.js?v=1.0.0"></script>
-    <script type="text/javascript">
-        watermark('禁止截图，截图封户', '昵称 : <?= $userrow['name']; ?>', '账号:<?= $userrow['user']; ?>');
-    </script>
-<? } ?>
-
 <!--天气-->
 <script defer>
     (function (a, h, g, f, e, d, c, b) {
@@ -1485,4 +1477,4 @@ $real_ip = real_ip();
     }(window, document, "script", "SeniverseWeatherWidget", "//cdn.sencdn.com/widget2/static/js/bundle.js?t=" + parseInt((new Date().getTime() / 100000000).toString(), 10)));
 </script>
 
-</html>
+</html> 

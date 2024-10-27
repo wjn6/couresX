@@ -8,8 +8,8 @@
 <script src="/assets/toc/jquery.min.js?v=3.7.1&sv=<?= $conf['version'] ?>"></script>
 
 <!--layui-->
-<link rel="stylesheet" href="/assets/toc/layui.min.css?v=2.9.16&sv=<?= $conf['version'] ?>" media="all">
-<script src="/assets/toc/layui.min.js?v=2.9.16&sv=<?= $conf['version'] ?>"></script>
+<link rel="stylesheet" href="/assets/toc/layui.min.css?v=2.9.18&sv=<?= $conf['version'] ?>" media="all">
+<script src="/assets/toc/layui.min.js?v=2.9.18&sv=<?= $conf['version'] ?>"></script>
 
 <!--Vue3-->
 <script src="/assets/toc/vue3.min.js?sv=<?= $conf['version'] ?>"></script>
@@ -19,7 +19,7 @@
 <script src="/assets/toc/element-plus_icons-vue.min.js?sv=<?= $conf['version'] ?>"></script>
 
 <!--axios-->
-<script src="/assets/toc/axios.min.js?v=1.6.8?sv=<?= $conf['version'] ?>"></script>
+<script src="/assets/toc/axios.min.js?v=1.7.7&sv=<?= $conf['version'] ?>"></script>
 <script src="/assets/toc/axios_toc.min.js?sv=<?= $conf['version'] ?>"></script>
 
 <!--谷歌字体-->
@@ -35,18 +35,28 @@
 <!--echarts-->
 <script src="/assets/toc/echarts.min.js?v=5.5.1?sv=<?= $conf['version'] ?>"></script>
 
-<link rel="stylesheet" href="../layuiadmin/style/admin.css?v=1.1.0" media="all">
+<link rel="stylesheet" href="../layuiadmin/style/admin.css?v=1.1.0&sv=<?= $conf['version'] ?>" media="all">
 <link rel="stylesheet" href="/assets/css/toc.css?sv=<?= $conf['version'] ?>" media="all">
 
 <!--nprogress-->
-<link href="/assets/toc/nprogress.css?v=0.2.0" rel="stylesheet">
-<script src="/assets/toc/nprogress.js?v=0.2.0" ></script>
+<link href="/assets/toc/nprogress.css?v=0.2.0&sv=<?= $conf['version'] ?>" rel="stylesheet">
+<script src="/assets/toc/nprogress.js?v=0.2.0&sv=<?= $conf['version'] ?>" ></script>
 <style>
     #nprogress{
         z-index: 99999999999999999999;
         position: fixed;
     }
 </style>
+
+<!--水印开关-->
+<?php if ($conf['sykg'] == 1) { ?>
+    <script src="assets/js/sy.js?v=1.0.0&sv=<?= $conf['version'] ?>"></script>
+    <script type="text/javascript">
+        $(window).on('load', () => {
+            watermark('禁止截图，截图封户', '昵称 : <?= $userrow['name']; ?>', '账号:<?= $userrow['user']; ?>');
+        });
+    </script>
+<? } ?>
 
 <!--defaultTools-->
 <script  src="/assets/toc/tool.min.js?sv=<?= $conf['version'] ?>"></script>
@@ -65,7 +75,6 @@
     
 <!--检测主题切换-->
 <script>
-    
     $(document).ready(()=>{
         if (localStorage.getItem('theme') === null) {
             let themesData_default = <?= $conf['themesData'] ?>.filter(i=>i.id == '<?= $conf['themesData_default'] ?>' )[0];

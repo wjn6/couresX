@@ -204,11 +204,18 @@ function alert($a, $wz = false)
   }
   exit("<script language='javascript'>layer.alert('{$a}',function(){window.location.href='{$wz}'});</script>");
 }
+
 function jsonReturn($code, $msg)
 {
   $data = array("code" => $code, "msg" => $msg);
   return exit(json_encode($data));
 }
+function jsonReturnData($code, $data=[],$msg="")
+{
+  $data = array("code" => $code, "data" =>$data, "msg" => $msg);
+  return exit(json_encode($data));
+}
+
 function get_curl($url, $post = 0, $referer = 0, $cookie = 0, $header = 0, $ua = 0, $nobaody = 0)
 {
   $ch = curl_init();

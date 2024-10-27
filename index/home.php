@@ -203,7 +203,7 @@ include_once('head.php');
                                                 Key: <span v-if="row.key">{{ row.key }}</span><span v-else>未开通</span>
                                             </div>
                                             <div v-if="row.key" style="opacity: .4;" title="点击复制">
-                                                <el-button @click="copyT(row.key)" circle size="small" text>
+                                                <el-button @click="copyT(row.key)" circle  size="small" text style="">
                                                     <el-icon><Document-Copy /></el-icon>
                                                 </el-button>
                                             </div>
@@ -220,7 +220,7 @@ include_once('head.php');
                                                 邀请码: <span v-if="row.yqm">{{ row.yqm }}</span><span v-else>未开通</span>
                                             </div>
                                             <div v-if="row.yqm" style="opacity: .4;" title="点击复制">
-                                                <el-button @click="copyT(row.yqm)" circle size="small" text>
+                                                <el-button @click="copyT(row.yqm)" circle  size="small" text style="">
                                                     <el-icon><Document-Copy /></el-icon>
                                                 </el-button>
                                             </div>
@@ -237,7 +237,7 @@ include_once('head.php');
                                                 上级: <? echo '【' . $sj['uid'] . '】' . $sj['qq'] ?>
                                             </div>
                                             <div style="opacity: .4;" title="点击联系">
-                                                <el-button @click="contactUU" circle size="small" text>
+                                                <el-button @click="contactUU" circle  size="small" text style="">
                                                     <el-icon>
                                                         <Service />
                                                     </el-icon>
@@ -504,49 +504,55 @@ include_once('head.php');
                     <div class="layui-card-header cl_position">
                         <div style="display: inline-flex; align-items: center; justify-content: left; gap: 2px;position: relative;">
                             <i class="layui-icon layui-icon-notice "></i>
-                            &nbsp;实时公告
+                            &nbsp;实时公告<el-button text bg size="small" style="padding: 6px;" @click="homenotice_get"><el-icon><Refresh /></el-icon></el-button>
                         </div>
                         <span v-if="uid" style="float:right;">
-                            &nbsp;<button class="layui-btn layui-btn-xs layui-bg-blue" @click="homenotice_open">管理公告</button>
+                            &nbsp;<button class="layui-btn layui-btn-xs layui-bg-blue" @click="homenotice_set">管理公告</button>
                         </span>
                     </div>
                     <div class="layui-card-body" style="height: 300px !important; overflow-y: auto; word-wrap: break-word; word-break: normal;">
                         
-                        <template v-if="(notice_open&&row.homenotice)">
-                            <div v-if="!row.homenotice.length">
-                                加载中...
-                            </div>
+                        <template v-if="homenotice_open">
+                            <template v-if="homenotice_loading">
+                                <i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i> 加载中...
+                            </template>
                             <template v-else>
-                                <div v-for="(item,key) in row.homenotice" :key="key">
-                                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                                        <h4 v-html="item.title"></h4>
-                                        <p>
-                                            <button type="button" class="layui-btn layui-btn-primary layui-btn-xs layui-font-green" style="border: 0;"><i class="layui-icon layui-icon-eye"></i>{{item.readUIDS}}</button>
+                                <template v-if="!homenotice.length">
+                                    <i class="layui-icon layui-icon-tips"></i> 暂无公告
+                                </template>
+                                <template v-else>
+                                    <div v-for="(item,key) in homenotice" :key="key">
+                                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                                            <h4 v-html="item.title"></h4>
+                                            <p>
+                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-xs layui-font-green" style="border: 0;"><i class="layui-icon layui-icon-eye"></i>{{item.readUIDS}}</button>
+                                            </p>
+                                        </div>
+                                        <p class="layui-font-12 layui-font-green">
+                                            {{item.uptime?item.uptime.split("--")[0]:item.addtime.split("--")[0]}}
                                         </p>
+                                        <p class="layui-font-13" v-html="item.content"></p>
+                                        <div class="layui-font-12" style="display: flex; align-items: center; scale: 0.8; transform-origin: left center;">
+                                            <p v-if="Number(item.top)">
+    
+                                                <button type="button" class="layui-btn layui-btn-xs layui-bg-blue">置顶</button>
+                                            </p>&nbsp;&nbsp;
+                                            <p>
+                                                <button type="button" class="layui-btn layui-btn-xs">{{item.author}}</button>
+                                            </p>&nbsp;&nbsp;
+                                        </div>
+                                        <hr v-if="key!==homenotice.length-1" />
                                     </div>
-                                    <p class="layui-font-12 layui-font-green">
-                                        {{item.uptime?item.uptime.split("--")[0]:item.addtime.split("--")[0]}}
-                                    </p>
-                                    <p class="layui-font-13" v-html="item.content"></p>
-                                    <div class="layui-font-12" style="display: flex; align-items: center; scale: 0.8; transform-origin: left center;">
-                                        <p v-if="Number(item.top)">
-
-                                            <button type="button" class="layui-btn layui-btn-xs layui-bg-blue">置顶</button>
-                                        </p>&nbsp;&nbsp;
-                                        <p>
-                                            <button type="button" class="layui-btn layui-btn-xs">{{item.author}}</button>
-                                        </p>&nbsp;&nbsp;
+                                    <div class="layui-font-12 layui-font-green ban center" style="margin-top: 30px;">
+                                        没有更多了...
                                     </div>
-                                    <hr v-if="key!==row.homenotice.length-1" />
-                                </div>
-                                <div class="layui-font-12 layui-font-green ban center" style="margin-top: 30px;">
-                                    没有更多了...
-                                </div>
+                                </template>
                             </template>
                         </template>
                         <template v-else>
-                            暂无公告
+                            <i class="layui-icon layui-icon-tips"></i> 暂未开启公告显示
                         </template>
+                        
                     </div>
                 </div>
             </el-col>
@@ -652,22 +658,39 @@ include_once('head.php');
                                     <tr>
                                         <td>服务器状态</td>
                                         <td class="layui-font-12">
-                                            CPU {{ osIfnoData.cpu }}&nbsp;
+                                            <el-icon style="position: relative;top: 2px;">
+                                                    <Cpu />
+                                                </el-icon> CPU {{ osIfnoData.cpu }}&nbsp;
                                             负载 {{ osIfnoData.fz }}&nbsp;
                                             内存 {{ osIfnoData.nc }}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>PHP版本</td>
-                                        <td><?php echo PHP_VERSION ?>&nbsp;<el-button text bg size="small" @click="open_phpinfo">phpinfo</el-button></td>
+                                        <td>
+                                            <i class="fa-brands fa-php"></i> <?php echo PHP_VERSION ?>&nbsp;<el-button text bg size="small" @click="open_phpinfo">phpinfo</el-button>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Mysql版本</td>
-                                        <td><?= str_replace('-log', '', $DB->get_row("select VERSION() as version")["version"]);?></td>
+                                        <td><i class="fa-solid fa-database"></i> <?= str_replace('-log', '', $DB->get_row("select VERSION() as version")["version"]);?></td>
                                     </tr>
                                     <tr>
                                         <td>操作系统</td>
-                                        <td><?php echo php_uname('s') ?></td>
+                                        <td>
+                                            <template v-if="/Linux/i.test('<?= php_uname('s') ?>')">
+                                                <i class="fa-brands fa-linux"></i> <?= php_uname('s') ?>
+                                            </template>
+                                            <template v-else-if="/Windows/i.test('<?= php_uname('s') ?>')">
+                                                <i class="fa-brands fa-windows"></i> <?= php_uname('s') ?>
+                                            </template>
+                                            <template v-else-if="/Darwin/i.test('<?= php_uname('s') ?>')">
+                                                <i class="fa-brands fa-apple"></i> <?= php_uname('s') ?>
+                                            </template>
+                                            <template v-else>
+                                                <i class="fa-solid fa-question"></i> <?= php_uname('s') ?>
+                                            </template>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>系统架构</td>
@@ -731,8 +754,9 @@ include_once('head.php');
                     
                 },
                 row: {
-                    "homenotice": null
                 },
+                homenotice_loading: true,
+                homenotice: [],
                 inte: '',
                 version: {
                     v: '',
@@ -749,7 +773,7 @@ include_once('head.php');
                     msg: '',
                 },
                 home_top_notice_open: <?= json_encode($conf['home_top_notice_open']) ?>,
-                notice_open: <?= json_encode($conf['notice_open']) ?>,
+                homenotice_open: <?= json_encode($conf['notice_open']) ?>,
                 quickNav: [{
                         t1: '交单',
                         t2: '提交订单',
@@ -828,10 +852,13 @@ include_once('head.php');
                 $('#userinfo').show()
                 _this.userinfo();
                 _this.progressOK = true;
+                _this.homenotice_get();
+                
                 _this.osIfno();
                 setInterval(() => {
                     _this.osIfno();
                 }, 6000)
+                
             })
 
 
@@ -951,7 +978,7 @@ include_once('head.php');
                     content: `<div class="layui-padding-2"><p>上级QQ：<?= $sj["qq"] ? $sj["qq"] : $sj["user"] ?></p><p>上级微信：<?= $sj["wx"] ?></p></div>`,
                 })
             },
-            homenotice_open: function() {
+            homenotice_set: function() {
                 layer.open({
                     type: 2,
                     title: '首页实时公告管理',
@@ -961,6 +988,18 @@ include_once('head.php');
                     content: 'homenotice.php',
                     scrollbar: false,
                 });
+            },
+            homenotice_get(){
+                const _this = this;
+                _this.homenotice_loading = true;
+                axios.post("/apiadmin.php?act=homenotice_get").then(r=>{
+                    if (r.data.code == 1) {
+                        _this.homenotice = r.data.data;
+                    }else{
+                        _this.$message.error("获取实时公告失败");
+                    }
+                    _this.homenotice_loading = false;
+                })
             },
             userinfo: function() {
                 const _this = this;
@@ -1103,4 +1142,4 @@ include_once('head.php');
     // -----------------------------
 </script>
 
-</html>
+</html> 

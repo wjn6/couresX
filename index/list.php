@@ -332,8 +332,8 @@ include_once('head.php');
                                             第一种方式：点击[处理]列的[Error]，即可对单个订单进行手动提交；<br />
                                             第二种方式【推荐】：批量勾选需要重新提交的订单，然后点击[处理状态操作]的[待处理]，等待你设定的对接定时任务自动轮询
                                         </el-collapse-item>
-                                        <el-collapse-item class="layui-font-12" title="② 为何导出功能无法导出所有的订单？" name="2">
-                                            [导出]功能是采集当前表格数据生成Excel，而且每页数据是通过分页获取。
+                                        <el-collapse-item class="layui-font-12" title="② 如何已Excel表格的形式导出订单数据？" name="2">
+                                            勾选需要导出的订单，然后点击[导出]。
                                         </el-collapse-item>
                                     </el-collapse>
                                 </div>
@@ -707,7 +707,7 @@ include_once('head.php');
                     </el-table>
 
                     <!--代理端表格-->
-                    <el-table v-else id="listTable_new_user" ref="listTable_new_user" :data="row.data" size="small"
+                    <el-table v-else id="listTable_new" ref="listTable_new" :data="row.data" size="small"
                         stripe border show-overflow-tooltip empty-text="暂无订单" style="width: 100%;"
                         @selection-change="listTable_new_select">
 
@@ -1455,9 +1455,12 @@ include_once('head.php');
                 {{# } }}
 </script>
 
+<script src="/assets/toc/xlsx.min.js?sv=<?= $conf['version'] ?>"></script>
+
 <?php include_once($root . '/index/components/footer.php'); ?>
 
 <script>
+    var XLSX;
     function copyT(text) {
         vm.copyT(text);
     }
@@ -1504,6 +1507,9 @@ include_once('head.php');
             const _this = this;
             let loadIndex = layer.load(0);
             $("#orderlist").ready(async () => {
+                
+                console.log("XLSX",XLSX)
+                
                 layer.close(loadIndex);
                 $("#orderlist").show();
                 await _this.dl_idname_get();
@@ -1574,49 +1580,64 @@ include_once('head.php');
             },
             export_table: function () {
                 const _this = this;
-
-                if (!_this.row.data.length) {
-                    _this.$message.error("无订单可导出");
+                
+                let selectRows = _this.$refs.listTable_new.getSelectionRows();
+                
+                const columns = ['ptname', 'uid', 'school','user','pass','kcname','status','process','remarks','fees'];
+                selectRows = selectRows.map(i=>{
+                    return columns.reduce((obj, key) => {
+                        if (i[key] !== undefined) {
+                          obj[key] = i[key];
+                        }
+                        return obj;
+                      }, {});
+                })
+                if (!selectRows.length) {
+                    _this.$message.error("未选择需要导出的订单");
                     return
                 }
-
+                
                 _this.export_status = 1;
-                layui.use(function () {
-
-                    let table = layui.table;
-                    let util = layui.util;
-                    let layer = layui.layer;
-
-                    const e_time = util.toDateString(new Date(), "yyyy_MM_dd HH_mm_ss");
-                    const e_title = '订单' + e_time;
-                    const fileName = e_title + '.xls'; // 定义文件名
-
-                    layer.open({
-                        type: 1,
-                        title: "是否导出当前页数据",
-                        content: '<div class="layui-padding-3"><span style="color:red">' + fileName + '<br/>数据合计：' + vm.row.data.length + '条</span><hr />将会为您导出当前页所有数据！<br />若需要按条件导出，请先设置好条件！</div>',
-                        btn: ['导出', '取消'],
-                        area: ['350px'],
-                        yes: function (index) {
-                            // 先初始化表格
-                            // table.init('listTable2', {
-                            //     title: e_title,
-                            // });
-                            // 获取需要导出的数据
-                            // let data = table.cache['listTable2']; // 根据实际情况获取数据
-
-                            // 导出文件
-                            vm.exportFile(fileName);
-
-                            layer.close(index);
-                            _this.$message.success('导出成功');
-                        },
-                        end: function () {
-                            _this.export_status = 0;
-                        },
-                    });
-
-                })
+                
+                const e_time = layui.util.toDateString(new Date(), "yyyy_MM_dd HH_mm_ss");
+                const e_title = '订单' + e_time;
+                const fileName = e_title + '.xlsx'; // 定义文件名
+                layer.open({
+                    type: 1,
+                    title: "是否导出当前页数据",
+                    content: '<div class="layui-padding-3"><span style="color:red">' + fileName + '<br/>数据合计：' + selectRows.length + '条</span></div>',
+                    btn: ['导出', '取消'],
+                    area: ['350px'],
+                    yes: function (index) {
+                        
+                        const worksheet = XLSX.utils.json_to_sheet(selectRows);
+                        const workbook = XLSX.utils.book_new();
+                        worksheet['!cols'] = [
+                            { wch: 23 },
+                            { wch: 5 },
+                            { wch: 23 },
+                            { wch: 18 },
+                            { wch: 18 },
+                            { wch: 30 },
+                            { wch: 10 },
+                            { wch: 6.5 },
+                            { wch: 40 },
+                            { wch: 10 },
+                        ];
+                        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+                        
+                        XLSX.writeFile(workbook, fileName);
+                        
+                        layer.close(index);
+                        _this.$message.success('导出成功');
+                        
+                        // vm.exportFile(fileName);
+                    },
+                    end: function () {
+                        _this.export_status = 0;
+                    },
+                });
+                
             },
             setOrder: function (res, rows) {
                 const _this = this;
