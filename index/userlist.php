@@ -23,6 +23,14 @@ if ($userrow['uid'] < '1') {
         </div>
 
         <div id="userlistTable" class=" layui-panel">
+            
+            <?php if($userrow["uid"] == 1){ ?>
+                <div v-if="row.tongji" class="layui-padding-2 layui-font-12" style="border-bottom: 1px solid #efefef;">
+                    <i class="layui-icon layui-icon-eye"></i> 代理数据统计(近一个月登录过的)：<br />
+                    待消耗：￥{{row.tongji.money_waitUse}} | 未被封禁：{{row.tongji.user_active}}个 | 直属代理：{{row.tongji.admin_user}}个
+                </div>
+            <?php } ?>
+            
             <div class="panel-body" style="overflow: hidden;">
                 <div class="layui-row layui-col-space10">
                     <div class="layui-form form-inline layui-padding-3" style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap;">
@@ -170,17 +178,15 @@ if ($userrow['uid'] < '1') {
                             <el-table-column prop="dd" label="单量" width="55" align="center">
                             </el-table-column>
                             
-                            <el-table-column v-if="admin" prop="zcz" label="总充值￥" width="120" >
+                            <el-table-column v-if="admin" prop="dl_num" label="下级数" width="55" align="center">
                                 <template #default="scope">
-                                    <el-input v-model="scope.row.zcz" size="small">
-                                        <template #append>
-                                            <el-button @click="setuser(scope.row,{zcz:scope.row.zcz})" style="padding: 8px 0;"><el-icon><Edit-Pen /></el-icon></el-button>
-                                        </template>
-                                    </el-input>
+                                    <template v-if="scope.row.dl_num == 0">
+                                        暂无
+                                    </template>
+                                    <template v-else>
+                                        {{scope.row.dl_num}}
+                                    </template>
                                 </template>
-                            </el-table-column>
-                            <el-table-column v-else prop="zcz" label="总充值￥" width="70" >
-                                
                             </el-table-column>
                             
                             <el-table-column v-if="admin" prop="uuid" label="上级" width="170" >
@@ -211,6 +217,20 @@ if ($userrow['uid'] < '1') {
                                     </span>
                                 </template>
                             </el-table-column>
+                            
+                            <el-table-column v-if="admin" prop="zcz" label="总充值￥" width="120" >
+                                <template #default="scope">
+                                    <el-input v-model="scope.row.zcz" size="small">
+                                        <template #append>
+                                            <el-button @click="setuser(scope.row,{zcz:scope.row.zcz})" style="padding: 8px 0;"><el-icon><Edit-Pen /></el-icon></el-button>
+                                        </template>
+                                    </el-input>
+                                </template>
+                            </el-table-column>
+                            <el-table-column v-else prop="zcz" label="总充值￥" width="70" >
+                                
+                            </el-table-column>
+                            
                             <el-table-column prop="yqm" label="邀请码" width="80" align="center">
                                 <template #default="scope">
                                     <span v-if="!scope.row.yqm" class="layui-btn layui-btn-xs layui-bg-blue" @click="yqm(scope.row.uid,scope.row.name)">点击设置</span>
@@ -564,7 +584,10 @@ if ($userrow['uid'] < '1') {
                 for (let i in rows) {
                     res[i] = rows[i]
                 }
+                
                 delete res.dd;
+                delete res.dl_num;
+                
                 var load = layer.load(0);
                 axios.post("/apiadmin.php?act=upuser", {
                     data: res
@@ -1067,4 +1090,4 @@ if ($userrow['uid'] < '1') {
     }
     var vm = app.mount('#userlist');
     // -----------------------------
-</script>
+</script> 

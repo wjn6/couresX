@@ -120,12 +120,14 @@ function processTask($taskId)
             $result = budanWk($oid);
 
             if ($result["code"] === 404) {
+                orderLogs($oid, -999, "订单补刷", "【手动批量】补刷失败，上游通讯异常", "0");
                 $logContent = formatLog($oid, "失败，上游通讯异常");
                 writeLog($logFilePath, $logContent);
                 return;
             }
 
             if ($result["code"] === -1) {
+                orderLogs($oid, -999, "订单补刷", "【手动批量】补刷失败：".$result["msg"], "0");
                 $logContent = formatLog($oid, "失败，" . $result["msg"]);
                 writeLog($logFilePath, $logContent);
                 return;
@@ -143,9 +145,11 @@ function processTask($taskId)
             $ok = $DB->query("UPDATE qingka_wangke_order SET status='{$status}', `bsnum`=bsnum+1,`uptime`='{$uptime}' WHERE oid='{$oid}'AND `yid`='{$res['yid']}'");
 
             if ($ok) {
+                orderLogs($oid, -999, "订单补刷", "【手动批量】补刷成功", "0");
                 $logContent = formatLog($oid, "成功！{$msgType}\r\n信息：{$result['msg']}\r\n出队时间: {$uptime}");
                 writeLog($logFilePath, $logContent);
             } else {
+                orderLogs($oid, -999, "订单补刷", "【手动批量】补刷失败：".$result["msg"], "0");
                 $logContent = formatLog($oid, "失败！{$msgType}\r\n信息：{$result['msg']}\r\n出队时间: {$uptime}");
                 writeLog($logFilePath, $logContent);
             }

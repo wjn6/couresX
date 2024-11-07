@@ -64,9 +64,9 @@ $real_ip = real_ip();
         }
     </style>
     <script>
-        $(document).ready(function () {
+        $(document).ready(() => {
             NProgress.start();
-            $(window).on('load', function () {
+            $(window).on('load', () => {
                 NProgress.done();
             });
         });
@@ -289,11 +289,11 @@ $real_ip = real_ip();
 <script>
     $(window).on('load', () => {
         setTimeout(() => {
-            document.getElementById("INDEXCOVERID").style.display = 'none';
+            $("#INDEXCOVERID").hide();
         }, 1000)
     });
     setTimeout(() => {
-        document.getElementById("INDEXCOVERID").style.display = 'none';
+        $("#INDEXCOVERID").hide();
     }, 1500)
 </script>
 
@@ -353,7 +353,7 @@ $real_ip = real_ip();
                         </a>
                     </li>
                     <?php if ($userrow['uid'] == 1) { ?>
-                    
+
                         <li class="layui-nav-item " lay-unselect>
                             <a href="javascript:void(0)" data-toggle="dropdown" title="应用">
                                 <i class="layui-icon layui-icon-app"></i>
@@ -370,7 +370,7 @@ $real_ip = real_ip();
                                                     Github
                                                 </span>
                                             </td>
-                                            
+
                                             <td class="layui-col-xs4 layui-padding-2"
                                                 @click="openApp('EailsQueue',`邮件队列 <span class='layui-font-12 layui-font-blue'>监控中</span>`,`components/EailsQueue.php`)">
                                                 <span class="icon"><el-icon>
@@ -639,6 +639,7 @@ $real_ip = real_ip();
                     </slot>
                 </el-alert>
             </div>
+            
             <?= $conf['tcgonggao']; ?>
         </div>
 
@@ -691,8 +692,7 @@ $real_ip = real_ip();
 
 </body>
 
-
-
+<!--cookie处理-->
 <script>
     if (localStorage.getItem('v') != '<?= $conf["version"] ?>') {
         localStorage.clear();
@@ -712,21 +712,27 @@ $real_ip = real_ip();
         localStorage.setItem('v', '<?= $conf["version"] ?>')
         location.href = "/index/login";
     }
-
-    const uap = new UAParser();
-    document.getElementById('DEBUGID').innerHTML = `
-        <li>
-            <?= $real_ip ?>
-        </li>
-        <li>
-            ${uap.getOS().name} ${uap.getBrowser().name} <?= $userrow["endaddress"] ?>
-        </li>
-    `;
 </script>
 
-<script type="text/javascript">
+<!--IP和当前浏览器标识-->
+<script>
+    $(document).ready(function () {
+        const uap = new UAParser();
+        $('#DEBUGID').html(`
+            <li>
+                <?= $real_ip ?>
+            </li>
+            <li>
+                ${uap.getOS().name} ${uap.getBrowser().name} <?= $userrow["endaddress"] ?>
+            </li>
+        `);
+    });
+</script>
+
+<!--引导修改默认密码-->
+<script >
     if ("<?= $userrow['pass']; ?>" === "<?= $conf['user_pass']; ?>") {
-        layui.use(function () {
+        layui.use(()=> {
             layer.open({
                 type: 1,
                 title: '<p style="display: flex; flex-direction: row;"><i class="layui-icon layui-icon-auz"></i>&nbsp;您的密码不安全</p>',
@@ -738,7 +744,7 @@ $real_ip = real_ip();
                 closeBtn: 0,
                 btnAlign: 'c', // 按钮居中
                 shade: 0, // 不显示遮罩
-                yes: function () {
+                yes() {
                     layer.closeAll();
                 }
             });
@@ -748,22 +754,27 @@ $real_ip = real_ip();
 
 <!--主题-->
 <script>
-    if (localStorage.getItem('theme') === null) {
-        let themesData_default = <?= $conf['themesData'] ?>.filter(i => i.id == '<?= $conf['themesData_default'] ?>')[0];
-        localStorage.setItem('theme', JSON.stringify({
-            id: themesData_default.id,
-            url: themesData_default.url
-        }));
-    }
-    let themeLinkClassEl0 = document.querySelectorAll('link.themeLink');
-    if (!themeLinkClassEl0.length) {
-        let new_themeLink0 = document.createElement('link');
-        new_themeLink0.classList.add('themeLink');
-        new_themeLink0.rel = 'stylesheet';
-        new_themeLink0.media = 'all';
-        new_themeLink0.href = JSON.parse(localStorage.getItem('theme')).url;
-        document.head.appendChild(new_themeLink0);
-    }
+    $(document).ready(function () {
+        if (localStorage.getItem('theme') === null) {
+            let themesDataDefault = <?= json_encode($conf['themesData']) ?>.find(i => i.id === '<?= $conf['themesData_default'] ?>');
+            localStorage.setItem('theme', JSON.stringify({
+                id: themesDataDefault.id,
+                url: themesDataDefault.url
+            }));
+        }
+    
+        let themeLinkClassEls = $('link.themeLink');
+        if (!themeLinkClassEls.length) {
+            let themeData = JSON.parse(localStorage.getItem('theme'));
+            let newThemeLink = $('<link>', {
+                class: 'themeLink',
+                rel: 'stylesheet',
+                media: 'all',
+                href: themeData.url
+            });
+            $('head').append(newThemeLink);
+        }
+    });
 </script>
 
 <script>
@@ -774,187 +785,7 @@ $real_ip = real_ip();
                 admin: '<?= $userrow['uid'] ?>' === '1' ? true : false,
                 // 请到【网站设置】->【页面路径】里配置侧边菜单
                 menuList: <?= $conf["menuList"] ?>,
-                // menuList1: [{
-                //     title: '首页',
-                //     icon: 'layui-icon layui-icon-home',
-                //     href: 'home',
-                //     on: true,
-                // },
-                //     <?php if ($conf["gpt"] == '1') { ?> {
-                    //         title: 'TocAI(免费GPT)',
-                    //         icon: 'layui-icon layui-icon-senior',
-                    //         href: <?= json_encode($conf['gpt_url']) ?>,
-                    //     },
-                    //     <?php } ?> {
-                //     title: '后台管理',
-                //     icon: 'layui-icon layui-icon-set',
-                //     href: '',
-                //     hide: '<?= $userrow['uid'] !== '1' ?>',
-                //     children: [{
-                //         title: '网站管理',
-                //         icon: '',
-                //         href: '',
-                //         children: [{
-                //             title: '网站设置',
-                //             icon: '',
-                //             href: 'wzsz',
-                //         },
-                //         {
-                //             title: '帮助设置',
-                //             icon: '',
-                //             href: 'helpsz',
-                //         },
-                //         ],
-                //     },
-                //     {
-                //         title: '商品管理',
-                //         icon: '',
-                //         href: '',
-                //         children: [{
-                //             title: '对接设置',
-                //             icon: '',
-                //             href: 'djsz',
-                //         },
-                //         {
-                //             title: '分类设置',
-                //             icon: '',
-                //             href: 'flsz',
-                //         },
-                //         {
-                //             title: '商品设置',
-                //             icon: '',
-                //             href: 'spsz',
-                //         },
-                //         {
-                //             title: '密价设置',
-                //             icon: '',
-                //             href: 'mjsz',
-                //         },
-                //         ],
-                //     },
-                //     {
-                //         title: '代理等级',
-                //         icon: '',
-                //         href: 'dldj',
-                //     },
-                //     {
-                //         title: '卡密管理',
-                //         icon: '',
-                //         href: 'kamisz',
-                //     },
-                //     ],
-                // },
-                // {
-                //     title: '学习中心',
-                //     icon: 'layui-icon layui-icon-component',
-                //     href: '',
-                //     children: [{
-                //         title: '提交订单',
-                //         icon: '',
-                //         href: 'add_pl',
-                //     },
-                //     {
-                //         title: '订单管理',
-                //         icon: '',
-                //         href: 'list',
-                //     },
-                //         <?php if ($conf["onlineStore_open"] == '1') { ?> {
-                    //             title: '接单商城',
-                    //             icon: '',
-                    //             href: 'tourist_spsz',
-                    //         },
-                    //         <?php } ?>
-                //             <?php if ($conf["axqg"] == '1') { ?> {
-                    //             title: '强国学习',
-                    //             icon: '',
-                    //             href: '',
-                    //             children: [{
-                    //                 title: 'ax强国',
-                    //                 icon: '',
-                    //                 href: 'axqg',
-                    //             },],
-                    //         },
-                    //         <?php } ?>
-                //     ],
-                // },
-                // {
-                //     title: '个人中心',
-                //     icon: 'layui-icon layui-icon-username',
-                //     href: '',
-                //     children: [{
-                //         title: '个人信息',
-                //         icon: '',
-                //         href: 'userinfo',
-                //     },
-                //     {
-                //         title: '操作日志',
-                //         icon: '',
-                //         href: 'log',
-                //     },
-                //     ],
-                // },
-                // {
-                //     title: '在线充值',
-                //     icon: 'layui-icon layui-icon-rmb',
-                //     href: 'pay',
-                // },
-                // {
-                //     title: '提交工单',
-                //     icon: 'layui-icon layui-icon-survey',
-                //     href: 'gongdan',
-                // },
-                // {
-                //     title: '代理管理',
-                //     icon: 'layui-icon layui-icon-user',
-                //     href: 'userlist',
-                // },
-                // {
-                //     title: '便携功能',
-                //     icon: 'layui-icon layui-icon-find-fill',
-                //     href: '',
-                //     children: [{
-                //         title: '销量热榜',
-                //         icon: '',
-                //         href: 'hots',
-                //     }, {
-                //         title: '学习价格',
-                //         icon: '',
-                //         href: 'myprice',
-                //     },
-                //     {
-                //         title: '对接文档',
-                //         icon: '',
-                //         href: 'docking',
-                //     },
-                //     {
-                //         title: '帮助文档',
-                //         icon: '',
-                //         href: 'help',
-                //     },
-                //     ]
-                // },
-                // {
-                //     title: '云端任务',
-                //     icon: 'layui-icon layui-icon-template-1',
-                //     href: 'btManage',
-                //     hide: '<?= $userrow['uid'] !== '1' ?>',
-                // },
-                // {
-                //     title: '内置图标',
-                //     icon: 'layui-icon layui-icon-template-1',
-                //     href: 'components/iconPreview',
-                //     hide: '<?= $userrow['uid'] !== '1' ?>',
-                // },
-                // ],
                 appLayer: [],
-                fixbarxXY: {
-                    isDragging: false,
-                    move: false,
-                    X: 0,
-                    Y: 0,
-                    X1: 0,
-                    Y1: 0,
-                },
                 themesData: <?= $conf['themesData'] ?>,
                 autoGet_data: {
                     gongdan: { num: 0, need: 0 },
@@ -991,17 +822,19 @@ $real_ip = real_ip();
                 $("#LAY_app").show();
 
                 // 消息盒子
-                layui.dropdown.render({
-                    elem: '#messageBox_dropdown',
-                    className: "messageBox_dropdown",
-                    trigger: "hover",
-                    click: (data) => {
-                        layui.admin.tabsAdd({
-                            title: data.title,
-                            href: data.href,
-                        })
-                    }
-                })
+                setTimeout(()=>{
+                    layui.dropdown.render({
+                        elem: '#messageBox_dropdown',
+                        className: "messageBox_dropdown",
+                        trigger: "hover",
+                        click: (data) => {
+                            layui.admin.tabsAdd({
+                                title: data.title,
+                                href: data.href,
+                            })
+                        }
+                    })
+                },300)
                 setTimeout(() => {
                     _this.messageBox_reloadData();
                 }, 2000)
@@ -1015,70 +848,6 @@ $real_ip = real_ip();
                         _this.openNotice();
                     }, 300);
                 <?php } ?>
-
-                // _this.$notify({
-                //     type: 'success',
-                //     title: '访问成功！',
-                //     dangerouslyUseHTMLString: true,
-                //     duration: 10000,
-                //     message: `
-                //             <div>
-                //                 当前访问信息：
-                //                 <table class="layui-table" lay-size="sm" style="margin-top: 3px;">
-                //                     <tr>
-                //                         <td class="center" style="width: 20%;">
-                //                             IP
-                //                         </td>
-                //                         <td>
-                //                             <?= $real_ip ?>
-                //                         </td>
-                //                     </tr>
-                //                     <tr>
-                //                         <td class="center" style="width: 20%;">
-                //                             地址
-                //                         </td>
-                //                         <td>
-                //                             <?= get_ip_city($real_ip) ?>
-                //                         </td>
-                //                     </tr>
-                //                 </table>
-                //                 上次登录信息：
-                //                 <table class="layui-table" lay-size="sm" style="margin-top: 3px;">
-                //                     <tr>
-                //                         <td style="width: 20%; text-align: center;">
-                //                             IP
-                //                         </td>
-                //                         <td>
-                //                             <?= $userrow["endip"] ?>
-                //                         </td>
-                //                     </tr>
-                //                     <tr>
-                //                         <td class="center" style="width: 20%;">
-                //                             地址
-                //                         </td>
-                //                         <td>
-                //                             <?= $userrow["endaddress"] ?>
-                //                         </td>
-                //                     </tr>
-                //                     <tr>
-                //                         <td class="center" style="width: 20%;">
-                //                             时间
-                //                         </td>
-                //                         <td>
-                //                             <?= $userrow["endtime"] ?>
-                //                         </td>
-                //                     </tr>
-                //                 </table>
-                //             </div>
-                //         `,
-                //     position: 'bottom-right',
-                //     customClass: 'access_notify',
-                // });
-                // if ($('.lockscreenDemoBox').length) {
-                //     $('.access_notify').css('z-index', $('.lockscreenDemoBox').css('z-index') - 1);
-                // } else {
-                //     $('.access_notify').css('z-index', 999999999);
-                // }
 
                 layui.use(() => {
                     // 设置主题
@@ -1127,7 +896,7 @@ $real_ip = real_ip();
                     hover: "disabled",
                     container: "tp-weather-widget"
                 })
-
+                
             })
         },
         methods: {
@@ -1135,7 +904,7 @@ $real_ip = real_ip();
                 const _this = this;
 
                 let data3 = _this.autoGet_data;
-                console.log("data3", data3)
+                // console.log("data3", data3)
 
                 let data4 = [];
                 let needNum = 0;
@@ -1162,8 +931,8 @@ $real_ip = real_ip();
                     } else {
                     }
                 }
-                console.log("data4", data4, needNum)
-
+                // console.log("data4", data4, needNum)
+                
                 if (!needNum) {
                     data4.push({
                         id: "no_need",
@@ -1184,11 +953,13 @@ $real_ip = real_ip();
                 }, {
                     type: "-",
                 })
-
-                layui.dropdown.reloadData("messageBox_dropdown", {
-                    data: data4,
-                })
-
+                
+                if($("#messageBox_dropdown")){
+                    layui.dropdown.reloadData("messageBox_dropdown", {
+                        data: data4,
+                    })
+                }
+                
             },
             messageBox_data() {
                 const _this = this;
@@ -1197,10 +968,10 @@ $real_ip = real_ip();
                 }).then(r => {
                     if (r.data.code === 1) {
                         _this.autoGet_data = r.data.data;
-                        console.log("_this.autoGet_data", _this.autoGet_data)
+                        // console.log("_this.autoGet_data", _this.autoGet_data)
                         _this.messageBox_reloadData();
                     } else {
-                        layer.msg('获取系统状态失败')
+                        layer.msg('获取消息失败')
                     }
                 })
             },
@@ -1477,4 +1248,4 @@ $real_ip = real_ip();
     }(window, document, "script", "SeniverseWeatherWidget", "//cdn.sencdn.com/widget2/static/js/bundle.js?t=" + parseInt((new Date().getTime() / 100000000).toString(), 10)));
 </script>
 
-</html> 
+</html>

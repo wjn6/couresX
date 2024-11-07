@@ -5,7 +5,7 @@ $act = $_GET['act'] ?? '';
 include_once('../Checkorder/configuration.php');
 include_once('../confing/authcodeClass.php');
 
-$version = '2.0.0.8';
+$version = '2.0.0.9';
 
 $host = $_SERVER['HTTP_HOST'];
 
@@ -269,6 +269,16 @@ switch ($act) {
         'smoney' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT "" ',
         'ip' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT "" ',
         'addtime' => 'TIMESTAMP ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT "添加时间" ',
+      ),
+      'qingka_wangke_orderLogs' => array(
+        'olid' => 'INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT "订单日志ID" ',
+        'oid' => 'INT(11) COMMENT "订单ID" ',
+        'uuid' => 'INT(11) COMMENT "代理ID" ',
+        'type' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT "" COMMENT "日志类型" ',
+        'content' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT "" COMMENT "日志内容" ',
+        'money' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT "0" COMMENT "金额变化" ',
+        'smoney' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT "0" COMMENT "剩余金额" ',
+        'addtime' => 'VARCHAR(50) COLLATE utf8mb4_unicode_ci DEFAULT "" COMMENT "添加时间" ',
       ),
       'qingka_wangke_mijia' => array(
         'mid' => 'INT(11) AUTO_INCREMENT PRIMARY KEY',

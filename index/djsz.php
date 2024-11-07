@@ -122,7 +122,13 @@ if ($userrow['uid'] != 1) {
                     </el-table-column>
                     <el-table-column prop="user" label="账号/UID" width="70" ></el-table-column>
                     <el-table-column prop="pass" label="密码/Key" width="150" ></el-table-column>
-                    <el-table-column prop="url" label="对接网址" width="170" ></el-table-column>
+                    <el-table-column prop="url" label="对接网址" width="170" >
+                        <template #default="scope">
+                            <el-link type="warning" class="layui-font-12" :href="scope.row.url" target="_blank" title="点击访问">
+                                <i v-show="scope.row.url" class="fa-solid fa-link layui-font-12"></i>&nbsp;{{scope.row.url}}
+                            </el-link>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="token" label="密钥/Token" width="150" ></el-table-column>
                     <el-table-column prop="addtime" label="添加时间" width="180" ></el-table-column>
                     <el-table-column prop="endtime" label="修改时间" width="180" ></el-table-column>

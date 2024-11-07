@@ -51,8 +51,9 @@ if ($queueLength == 0) {
     $i = 0;
     // 从数据库中查询未完成的订单并加入队列
     $orders = $DB->query("SELECT oid FROM qingka_wangke_order WHERE dockstatus = 1 AND status NOT IN ('已学习','已完成', '已考试', '已退款', '已取消','待支付','待审核') ORDER BY oid ASC");
-    foreach ($orders as $order) {
+    foreach ($orders as $key => $order) {
         $redis->lPush("oids", $order['oid']);
+        orderLogs($order['oid'], -999, "进度更新", "【自动批量】加入同步队列", "0");
         $i++;
     }
     

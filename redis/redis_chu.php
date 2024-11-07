@@ -118,17 +118,19 @@ function processTask($taskId)
     if (!empty($oid)) {
         $oid = trim($oid);
         $row = $DB->get_row("SELECT SQL_NO_CACHE * FROM qingka_wangke_order WHERE oid='$oid'");
-
+        
         if ($row) {
             $result = processCx($oid);
 
             if ($result["code"] === 404) {
+                orderLogs($oid, -999, "进度更新", "【自动批量】同步失败，上游通讯异常", "0");
                 $logContent = formatLog($oid, "失败，上游通讯异常");
                 writeLog($logFilePath, $logContent);
                 return;
             }
 
             if ($result["code"] === -1) {
+                orderLogs($oid, -999, "进度更新", "【自动批量】同步失败：".$result["msg"], "0");
                 $logContent = formatLog($oid, "失败，" . $result["msg"]);
                 writeLog($logFilePath, $logContent);
                 return;
@@ -158,18 +160,21 @@ function processTask($taskId)
 
                 if ($ok) {
                     if (empty($process_new) && empty($status_new) && empty($remarks_new)) {
+                        orderLogs($oid, -999, "进度更新", "【自动批量】返回为空", "0");
                         $logContent = formatLog($oid, "返回状态为空！跳过。\r\n 队列池剩余：{$redis->LLEN($codeType)}");
                         writeLog($logFilePath, $logContent);
                     } elseif ($process_new == $row['process'] && $status_new == $row['status']) {
-
+                        orderLogs($oid, -999, "进度更新", "【自动批量】无最新进度", "0");
                         $logContent = formatLog($oid, $oid2[1] . "状态无需更新！跳过。\r\n 队列池剩余：{$redis->LLEN($codeType)}");
                         writeLog($logFilePath, $logContent);
                     } else {
+                        orderLogs($oid, -999, "进度更新", "【自动批量】最新进度：".$row['remarks'], "0");
                         $logContent = "状态更新：{$row['status']}=>{$status_new}\r\n进度更新：{$row['process']}=>{$process_new}\r\n备注更新：{$row['remarks']}=>{$remarks_new}\r\n 队列池剩余：{$redis->LLEN($codeType)}";
                         $logContent = formatLog($oid, '', $logContent);
                         writeLog($logFilePath, $logContent);
                     }
                 } else {
+                    orderLogs($oid, -999, "进度更新", "【自动批量】同步失败", "0");
                     $logContent = formatLog($oid, "同步失败！");
                     writeLog($logFilePath, $logContent);
                 }
@@ -194,22 +199,27 @@ function processTask($taskId)
                     $ok = $DB->query("update qingka_wangke_order set `name`='{$result3['name']}',`yid`='{$result3['yid']}',`status`='{$result3['status_text']}',`courseStartTime`='{$result3['kcks']}',`courseEndTime`='{$result3['kcjs']}',`examStartTime`='{$result3['ksks']}',`examEndTime`='{$result3['ksjs']}',`process`='{$result3['process']}',`remarks`='{$remarks_new}' ,`uptime`='{$date}' where `user`='{$result3['user']}' and `kcname`='{$result3['kcname']}' ");
                     if ($ok) {
                         if (empty($process_new) && empty($status_new) && empty($remarks_new)) {
+                            orderLogs($oid, -999, "进度更新", "【自动批量】返回为空", "0");
                             $logContent = formatLog($oid, "返回状态为空！跳过。\r\n队列池剩余：{$redis->LLEN($codeType)}");
                             writeLog($logFilePath, $logContent);
                         } elseif ($process_new == $row['process'] && $status_new == $row['status']) {
+                            orderLogs($oid, -999, "进度更新", "【自动批量】无最新进度", "0");
                             $logContent = formatLog($oid, "状态无需更新！跳过。\r\n队列池剩余：{$redis->LLEN($codeType)}");
                             writeLog($logFilePath, $logContent);
                         } else {
+                            orderLogs($oid, -999, "进度更新", "【自动批量】最新进度：".$row['remarks'], "0");
                             $logContent = "状态更新：{$row['status']}=>{$status_new}\r\n进度更新：{$row['process']}=>{$process_new}\r\n备注更新：{$row['remarks']}=>{$remarks_new}\r\n队列池剩余：{$redis->LLEN($codeType)}";
                             $logContent = formatLog($oid, '', $logContent);
                             writeLog($logFilePath, $logContent);
                         }
                         ;
                     } else {
+                        orderLogs($oid, -999, "进度更新", "【自动批量】同步失败", "0");
                         $logContent = formatLog($oid, "同步失败！");
                         writeLog($logFilePath, $logContent);
                     }
                 } else {
+                    orderLogs($oid, -999, "进度更新", "【自动批量】同步失败，无匹配项", "0");
                     $logContent = formatLog($oid, "同步失败，无匹配项");
                     writeLog($logFilePath, $logContent);
                 }

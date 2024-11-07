@@ -410,6 +410,12 @@ include_once('head.php');
                                                         <search />
                                                     </el-icon>查看详细</div>
                                             </el-dropdown-item>
+                                            <el-dropdown-item>
+                                                <div style="margin: 0;" @click="ddlogs(scope.row,1)"><el-icon
+                                                        style="margin: 2px;">
+                                                        <Files />
+                                                    </el-icon>查看订单日志</div>
+                                            </el-dropdown-item>
                                             <el-dropdown-item divided>
                                                 <p style="margin: 0;" @click="copyT(`${scope.row.school=='自动识别'?'':scope.row.school} ${scope.row.user} ${scope.row.pass}`)">
                                                     <el-icon style="margin: 2px;">
@@ -650,6 +656,9 @@ include_once('head.php');
                         </el-table-column>
                         <el-table-column prop="remarks" label="日志" width="200">
                             <template #default="scope">
+                                <div style="position: absolute; top: 1px; right: 15px; cursor: pointer;" title="点击查看订单日志" @click="ddlogs(scope.row,1)">
+                                    <el-icon><Files /></el-icon>
+                                </div>
                                 <div style="white-space: normal; overflow-y: auto; max-height: 70px;">
                                     {{scope.row.remarks?scope.row.remarks:'已完成：'+(
                                     process_num(scope.row.process)?process_num(scope.row.process):(scope.row.status.search(/已完成|已经完成|已经全部完成/)!=
@@ -919,6 +928,9 @@ include_once('head.php');
                         </el-table-column>
                         <el-table-column prop="remarks" label="日志" width="200">
                             <template #default="scope">
+                                <div style="position: absolute; top: 1px; right: 15px; cursor: pointer;" title="点击查看订单日志" @click="ddlogs(scope.row,1)">
+                                    <el-icon><Files /></el-icon>
+                                </div>
                                 {{scope.row.remarks?scope.row.remarks:'已完成：'+(
                                     process_num(scope.row.process)?process_num(scope.row.process):(scope.row.status.search(/已完成|已经完成|已经全部完成/)!=
                                     -1?100:0) )+'%'}}
@@ -1423,6 +1435,46 @@ include_once('head.php');
             ?>
         </select>
     </div>
+    
+    <div id="ddlogsDOM" class="layui-padding-1" style="display: none;">
+        <el-table :data="nowOrderLogs" style="width: 100%" stripe border show-overflow-tooltip size="small" empty-text="暂无日志">
+            <?php if($userrow["uid"] == 1){ ?>
+                <el-table-column prop="uid" label="操作人" width="75" align="center">
+                    <template #default="scope">
+                        <template v-if="scope.row.uid == -999">
+                            系统
+                        </template>
+                        <template v-else>
+                            [{{scope.row.uid}}]{{scope.row.user}}
+                        </template>
+                    </template>
+                </el-table-column>
+            <?php } ?>
+            <el-table-column prop="type" label="类型" width="75"></el-table-column>
+            <el-table-column prop="content" label="日志" min-width="180"></el-table-column>
+            <el-table-column prop="money" label="金额变化" width="75" align="center">
+                    <template #default="scope">
+                        <template v-if="scope.row.money == 0">
+                            无
+                        </template>
+                        <template v-else>
+                            {{scope.row.money}}
+                        </template>
+                    </template>
+            </el-table-column>
+            <el-table-column prop="smoney" label="剩余金额" width="75" align="center">
+                    <template #default="scope">
+                        <template v-if="scope.row.smoney == 0">
+                            无
+                        </template>
+                        <template v-else>
+                            {{scope.row.smoney}}
+                        </template>
+                    </template>
+            </el-table-column>
+            <el-table-column prop="addtime" label="添加时间" width="185" align="center"></el-table-column>
+        </el-table>
+    </div>
 
 </div>
 
@@ -1476,6 +1528,8 @@ include_once('head.php');
                 phone: '',
                 list: '',
                 sex: [],
+                nowOid: 0,
+                nowOrderLogs: [],
                 ddinfo3: {
                     status: false,
                     info: []
@@ -1523,6 +1577,13 @@ include_once('head.php');
                     margin: 100
                 })
             })
+        },
+        computed:{
+            nowOrder(){
+                let _this = this;
+                let nowOrder = _this.row.data.find(i=>i.oid == _this.nowOid);
+                return nowOrder?nowOrder:{};
+            },
         },
         methods: {
             copyT(text = '') {
@@ -2156,6 +2217,45 @@ include_once('head.php');
                 }, 100);
 
             },
+            ddlogs: function (a,type=0) {
+                const _this = this;
+                let loadIndex = layer.load(0);
+                axios.post("/apiadmin.php?act=orderLogs_get",{
+                    oid: a.oid
+                }).then(r=>{
+                    if(r.data.code == 1){
+                        _this.nowOid = a.oid;
+                        _this.nowOrderLogs = r.data.data;
+                        if(type){
+                            setTimeout(()=>{
+                                layer.open({
+                                    type: 1,
+                                    title: "订单日志",
+                                    content: $("#ddlogsDOM"),
+                                    area: [($(window).width() - 20) + "px","auto"],
+                                    maxHeight: $(window).height() - 20,
+                                    btn: ["刷新","关闭"],
+                                    yes(){
+                                        _this.ddlogs(a);
+                                    },
+                                    success(){
+                                        _this.$message.success("获取成功");
+                                        layer.close(loadIndex);
+                                    },
+                                    end(){
+                                        _this.nowOid = 0;
+                                        _this.nowOrderLogs = [];
+                                    },
+                                })
+                            },100)
+                        }
+                    }else{
+                        _this.$message.error(r.data.msg?r.data.msg:"网络异常");
+                    }
+                    layer.close(loadIndex);
+                })
+
+            },
             tk: function (sex) {
                 if (!sex || sex.length == 0) {
                     _this.$message.error("请先选择订单！");
@@ -2357,4 +2457,4 @@ include_once('head.php');
     var vm = app.mount('#orderlist');
     // -----------------------------
 
-</script>
+</script> 

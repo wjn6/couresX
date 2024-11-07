@@ -52,6 +52,7 @@ if ($lenth == 0) {
     $orders = $DB->query("select oid from qingka_wangke_order where dockstatus='0' and status NOT IN ('已学习','已完成', '已考试', '已退款', '已取消','待支付','待审核') order by oid asc");
     foreach ($orders as $order) {
         $redis->lPush("addoid", $order['oid']);
+        orderLogs($order['oid'], -999, "订单提交", "【自动批量】开始提交到渠道", "0");
         $i++;
     }
     

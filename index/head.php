@@ -24,6 +24,7 @@ $spsm = $DB->get_row("select content from qingka_wangke_class where cid='$cid' l
 
 <head>
     <meta charset="utf-8">
+    <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title><?= $conf['sitename'] ?> <?php if(!empty($conf['subsitename'])){ echo ' | '.$conf['subsitename']; } ?></title>
     <meta name="keywords" content="<?= $conf['keywords']; ?>" />
@@ -143,10 +144,10 @@ $spsm = $DB->get_row("select content from qingka_wangke_class where cid='$cid' l
 <script>
     $(window).on('load', () => {
         setTimeout(()=>{
-            document.getElementById("PAGECOVERID").style.display = 'none';
+            $("#PAGECOVERID").hide();
         },1000)
     });
     setTimeout(()=>{
-        document.getElementById("PAGECOVERID").style.display = 'none';
+        $("#PAGECOVERID").hide();
     },1500)
 </script>

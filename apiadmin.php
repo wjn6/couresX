@@ -14,7 +14,7 @@ if (empty($conf) || empty($userrow)) {
 function is_admin()
 {
     global $userrow;
-    if (empty($userrow["uid"]) || (string)$userrow["uid"] !== '1') {
+    if (empty($userrow["uid"]) || (string) $userrow["uid"] !== '1') {
         http_response_code(403);
         header("Content-Type: text/plain; charset=utf-8");
         exit("403 Forbidden - Permission Denied1");
@@ -32,7 +32,7 @@ if ($php_Self != "apiadmin.php") {
     exit(json_encode(['code' => -1, 'msg' => $msg]));
 }
 switch ($act) {
-        // 获取服务器内存、负载等
+    // 获取服务器内存、负载等
     case "osIfno":
         $data = [];
 
@@ -46,7 +46,7 @@ switch ($act) {
         exec('top -bn1 | grep "Cpu(s)"', $cpuOutput);
         if (!empty($cpuOutput)) {
             if (preg_match('/(\d+\.\d+)\s*id/', $cpuOutput[0], $matches)) {
-                $cpu = 100 - (float)$matches[1];
+                $cpu = 100 - (float) $matches[1];
             }
         }
 
@@ -58,8 +58,8 @@ switch ($act) {
         if (!empty($memOutput)) {
             $memInfo = preg_split('/\s+/', $memOutput[0]);
             if (count($memInfo) >= 7) {
-                $memTotal = (float)$memInfo[1];
-                $memUsed = (float)$memInfo[2];
+                $memTotal = (float) $memInfo[1];
+                $memUsed = (float) $memInfo[2];
                 $nc = ($memUsed / $memTotal) * 100;
             }
         }
@@ -67,7 +67,7 @@ switch ($act) {
 
         $userInfoReturn = $DB->get_row("select money from qingka_wangke_user where uid='{$userrow['uid']}' ");
         $userInfo = [
-            "money" => (float)$userInfoReturn["money"],
+            "money" => (float) $userInfoReturn["money"],
             "orderNum" => 0,
         ];
 
@@ -76,7 +76,7 @@ switch ($act) {
             $sql_orderNum = "where uid='{$userrow['uid']}'";
         }
         $orderNum = $DB->count("select count(*) from qingka_wangke_order {$sql_orderNum} ");
-        $userInfo["orderNum"] = (float)$orderNum;
+        $userInfo["orderNum"] = (float) $orderNum;
         exit(json_encode(["code" => 1, "data" => $data, "userInfo" => $userInfo]));
         break;
     case "messageBox_data":
@@ -92,8 +92,8 @@ switch ($act) {
             $need_gongdan_sql = "select count(*) from qingka_wangke_gongdan where state='待回复' and uid={$userrow['uid']} ";
         }
         $need_gongdan = $DB->count($need_gongdan_sql);
-        $data["gongdan"]["need"] = (float)$need_gongdan > 0 ? 1 : 0;
-        $data["gongdan"]["num"] = (float)$need_gongdan > 99 ? 99 : (float)$need_gongdan;
+        $data["gongdan"]["need"] = (float) $need_gongdan > 0 ? 1 : 0;
+        $data["gongdan"]["num"] = (float) $need_gongdan > 99 ? 99 : (float) $need_gongdan;
         $data["gongdan"]["abnormal_t"] = "有待回复的工单";
         $data["gongdan"]["normal_t"] = "";
 
@@ -102,8 +102,8 @@ switch ($act) {
         $data["money"]["href"] = "gongdan";
         $data["money"]["text"] = "提交工单";
         $need_money = $DB->get_row("select money from qingka_wangke_user where uid={$userrow['uid']} ")["money"];
-        $data["money"]["need"] = (float)$need_money < 15 ? 1 : 0;
-        $data["money"]["num"] = (float)$need_money;
+        $data["money"]["need"] = (float) $need_money < 15 ? 1 : 0;
+        $data["money"]["num"] = (float) $need_money;
         $data["money"]["abnormal_t"] = "余额不足 <15";
         $data["money"]["normal_t"] = "";
 
@@ -112,8 +112,8 @@ switch ($act) {
         $data["djOrder"]["href"] = "list";
         $data["djOrder"]["text"] = "订单管理";
         $need_djOrder = $DB->count("select count(*) from qingka_wangke_order where dockstatus='2' ");
-        $data["djOrder"]["need"] = (float)$need_djOrder > 0 ? 1 : 0;
-        $data["djOrder"]["num"] = (float)$need_djOrder > 99 ? 99 : (float)$need_djOrder;
+        $data["djOrder"]["need"] = (float) $need_djOrder > 0 ? 1 : 0;
+        $data["djOrder"]["num"] = (float) $need_djOrder > 99 ? 99 : (float) $need_djOrder;
         $data["djOrder"]["abnormal_t"] = "有订单对接处理失败";
         $data["djOrder"]["normal_t"] = "";
 
@@ -125,7 +125,7 @@ switch ($act) {
         $result = emailGo("1", $conf["smtp_user"], "测试邮件发送", "恭喜你，已成功配置邮件！", $conf["smtp_cuser"], "发送测试");
         exit(json_encode(["code" => 1, "status" => "已尝试发送,请查看邮箱!", "ok" => $result]));
         break;
-        // 邮件队列获取
+    // 邮件队列获取
     case "emailsListGet":
         is_admin();
         $type = trim(strip_tags(daddslashes($_POST['type'])));
@@ -152,7 +152,7 @@ switch ($act) {
             exit(json_encode(["code" => -1, "data" => []]));
         }
         break;
-        // 任务状态、处理状态操作
+    // 任务状态、处理状态操作
     case 'status_order':
         is_admin();
         $a = trim(strip_tags(daddslashes($_GET['a'])));
@@ -178,8 +178,8 @@ switch ($act) {
         }
 
         break;
-        // 代理管理页管理无痕修改代理数据
-    case  'upuser':
+    // 代理管理页管理无痕修改代理数据
+    case 'upuser':
         is_admin();
         $data = daddslashes($_POST['data']);
 
@@ -209,8 +209,8 @@ switch ($act) {
             jsonReturn(-1, "未知失败");
         }
         break;
-        // 个人信息页更新个人数据
-    case  'upuser2':
+    // 个人信息页更新个人数据
+    case 'upuser2':
         $data = daddslashes($_POST['data']);
 
         if ($userrow["uid"] != '1') {
@@ -234,7 +234,7 @@ switch ($act) {
             jsonReturn(-1, "未知失败");
         }
         break;
-        // 单独修改密码
+    // 单独修改密码
     case 'passwd':
         $oldpass = trim(strip_tags(daddslashes($_POST['oldpass'])));
         $newpass = trim(strip_tags(daddslashes($_POST['newpass'])));
@@ -251,7 +251,7 @@ switch ($act) {
             jsonReturn(-1, "修改失败");
         }
         break;
-        // 网站设置
+    // 网站设置
     case 'webset':
         parse_str(daddslashes($_POST['data']), $row);
         $updateSuccess = true;
@@ -273,7 +273,7 @@ switch ($act) {
             jsonReturn(-1, "修改失败: {$failedField}");
         }
         break;
-        // 代理余额
+    // 代理余额
     case 'usermoney':
         $data = $DB->get_row("select money from qingka_wangke_user where uid ='{$userrow['uid']}'");
         if ($data && isset($data['money']) && $data['money'] >= 0) {
@@ -282,7 +282,7 @@ switch ($act) {
             exit(json_encode(["code" => -1]));
         }
         break;
-        //设置邀请码
+    //设置邀请码
     case 'szyqm':
         $uid = trim(strip_tags(daddslashes($_POST['uid'])));
         $yqm = trim(strip_tags(daddslashes($_POST['yqm'])));
@@ -322,7 +322,7 @@ switch ($act) {
         }
 
         break;
-        // 获取首页实时公告列表 
+    // 获取首页实时公告列表 
     case 'hnlist':
         $cx = daddslashes($_POST['cx']);
         $page = trim(strip_tags(daddslashes($_POST['page']))) ? trim(strip_tags(daddslashes($_POST['page']))) : 1;
@@ -348,13 +348,13 @@ switch ($act) {
         $last_page = ceil($count / $pagesize); //取最大页数
 
         if ($result) {
-            $response = ["code" => 1, "data" => $data, "last_page" => (int)$last_page, 'count' => (int)$count, 'pagesize' => (int)$pagesize, "current_page" => (int)$page];
+            $response = ["code" => 1, "data" => $data, "last_page" => (int) $last_page, 'count' => (int) $count, 'pagesize' => (int) $pagesize, "current_page" => (int) $page];
         } else {
             $response = ["code" => -1, "msg" => '获取失败'];
         }
         exit(json_encode($response));
         break;
-        // 首页实时公告添加
+    // 首页实时公告添加
     case 'homenotice_add':
         is_admin();
         $title = trim(strip_tags(daddslashes($_POST['title'])));
@@ -368,7 +368,7 @@ switch ($act) {
         $maxId = $maxIdRow['max_id'];
         $maxId = $maxId + 1;
 
-        $result =  $DB->query(" insert into qingka_wangke_homenotice (sort,title,content,author,status,top,addtime) values ('{$maxId}','{$title}','{$content}','{$author}','{$status}','{$top}','{$date}') ");
+        $result = $DB->query(" insert into qingka_wangke_homenotice (sort,title,content,author,status,top,addtime) values ('{$maxId}','{$title}','{$content}','{$author}','{$status}','{$top}','{$date}') ");
 
         if ($result) {
             exit(json_encode(["code" => 1, "msg" => "添加成功"]));
@@ -377,7 +377,7 @@ switch ($act) {
         }
 
         break;
-        // 实时公告删除
+    // 实时公告删除
     case 'homenotice_del':
         is_admin();
         $sex = daddslashes($_POST['sex']);
@@ -390,7 +390,7 @@ switch ($act) {
             exit('{"code":-1,"msg":"失败"}');
         }
         break;
-        // 首页公告更新
+    // 首页公告更新
     case 'homenotice_up':
         is_admin();
         $id = trim(strip_tags(daddslashes($_POST['id'])));
@@ -417,7 +417,7 @@ switch ($act) {
             exit(json_encode(["code" => -1, "msg" => "更新失败"]));
         }
         break;
-        // 首页公告排序
+    // 首页公告排序
     case 'homenotice_sort':
         is_admin();
         $type = $_POST['type'];
@@ -476,7 +476,7 @@ switch ($act) {
             echo json_encode(["code" => -1, "msg" => "未找到相应的数据"]);
         }
         break;
-        // 设置邀请费率
+    // 设置邀请费率
     case 'yqprice':
         $yqprice = trim(strip_tags(daddslashes($_POST['yqprice'])));
         if (!is_numeric($yqprice)) {
@@ -505,8 +505,8 @@ switch ($act) {
         $DB->query("update qingka_wangke_user set {$sql} where uid='{$userrow['uid']}' ");
         jsonReturn(1, "设置成功");
         break;
-        // 微信登录
-        // 用户数据
+    // 微信登录
+    // 用户数据
     case 'userinfo':
         if ($islogin != 1) {
             exit('{"code":-10,"msg":"请先登录"}');
@@ -522,7 +522,7 @@ switch ($act) {
         }
         //安全验证2
         if ($userrow['uid'] != 1) {
-            if ((int)$userrow['money'] - (int)'0.1' > (int)$userrow['zcz']) {
+            if ((int) $userrow['money'] - (int) '0.1' > (int) $userrow['zcz']) {
                 // $DB->query("update qingka_wangke_user set money='$zcz',active='0' where uid='{$userrow['uid']}' ");
                 // jsonReturn(-9, "账号异常，请联系你老大");
             }
@@ -593,7 +593,7 @@ switch ($act) {
         );
         exit(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
         break;
-        // 开通api
+    // 开通api
     case 'ktapi':
         $type = trim(strip_tags(daddslashes($_GET['type'])));
         $uid = trim(strip_tags(daddslashes($_GET['uid'])));
@@ -723,12 +723,13 @@ switch ($act) {
 
         exit(json_encode($result0));
         break;
-        // 支付
+    // 支付
     case 'pay':
         $zdpay = $conf['zdpay'];
         $money = trim(strip_tags(daddslashes($_POST['money'])));
         $name = "零食购买-" . $money . "";
-        if (!preg_match('/^[0-9.]+$/', $money)) exit('{"code":-1,"msg":"订单金额不合法"}');
+        if (!preg_match('/^[0-9.]+$/', $money))
+            exit('{"code":-1,"msg":"订单金额不合法"}');
         if ($money < $zdpay) {
             jsonReturn(-1, "在线充值最低{$zdpay}");
         }
@@ -786,8 +787,8 @@ switch ($act) {
             if ($price >= $price1) { //密价价格大于原价，恢复原价
                 $price = $price1;
             }
-            
-            $price = roun($price,3);
+
+            $price = roun($price, 3);
             $data[] = array(
                 'sort' => $row['sort'],
                 'cid' => $row['cid'],
@@ -814,7 +815,7 @@ switch ($act) {
         $data = array('code' => 1, 'data' => $data);
         exit(json_encode($data));
         break;
-        // 提交订单
+    // 提交订单
     case 'add':
 
         $cid = trim(strip_tags(daddslashes($_POST['cid'])));
@@ -860,10 +861,10 @@ switch ($act) {
         if ($danjia == 0 || $userrow['addprice'] < 0.01) {
             exit('{"code":-1,"msg":"大佬，我得罪不起您，我小本生意，有哪里得罪之处，还望多多包涵"}');
         }
-        
-        $danjia = $danjia < 0.001 ? 0.001: sprintf("%.3f", $danjia);
 
-            
+        $danjia = $danjia < 0.001 ? 0.001 : sprintf("%.3f", $danjia);
+
+
         $money = count($data) * $danjia;
         if ($userrow['money'] < $money) {
             exit('{"code":-1,"msg":"余额不足"}');
@@ -898,14 +899,16 @@ switch ($act) {
                 $dockstatus = '0';
             }
 
-            $is = $DB->query("insert into qingka_wangke_order (uid,cid,hid,ptname,school,name,user,pass,kcid,kcname,courseEndTime,fees,noun,miaoshua,addtime,ip,dockstatus,qg) values ('{$userrow['uid']}','{$rs['cid']}','{$rs['docking']}','{$rs['name']}','{$school}','$userName','$user','$pass','$kcid','$kcname','{$kcjs}','{$danjia}','{$rs['noun']}','$miaoshua','{$date}','$clientip','$dockstatus','$qg') "); //将对应课程写入数据库	               	       	      	
+            $is = $DB->insert("insert into qingka_wangke_order (uid,cid,hid,ptname,school,name,user,pass,kcid,kcname,courseEndTime,fees,noun,miaoshua,addtime,ip,dockstatus,qg) values ('{$userrow['uid']}','{$rs['cid']}','{$rs['docking']}','{$rs['name']}','{$school}','$userName','$user','$pass','$kcid','$kcname','{$kcjs}','{$danjia}','{$rs['noun']}','$miaoshua','{$date}','$clientip','$dockstatus','$qg') "); //将对应课程写入数据库
             if ($is) {
 
                 $DB->query("update qingka_wangke_user set money=money-'{$danjia}' where uid='{$userrow['uid']}' limit 1 ");
+
+                orderLogs($is, $userrow['uid'], "站内下单", "下单成功，扣费：".$danjia, "-$danjia");
                 wlog($userrow['uid'], "添加任务", "  {$rs['name']} {$user} {$pass} {$kcname} 扣除{$danjia}！", -$danjia);
 
                 if (!empty($conf["smtp_open_xd"])) {
-                    $email_c =  '
+                    $email_c = '
                     <h1>🍕成功下单！UID：' . $userrow['uid'] . '</h1>
                     <hr />
                     <p><b>平台：' . $rs['name'] . '</b></p>
@@ -935,7 +938,7 @@ switch ($act) {
             exit('{"code":-1,"msg":"提交失败"}');
         }
         break;
-        // 帮助文档列表
+    // 帮助文档列表
     case 'helplist':
         $cx = isset($_POST['cx']) ? daddslashes($_POST['cx']) : '';
         $page = isset($_POST['page']) ? intval(trim(strip_tags(daddslashes($_POST['page'])))) : 1;
@@ -967,13 +970,13 @@ switch ($act) {
         $last_page = ceil($count / $pagesize); //取最大页数
 
         if ($a) {
-            $data = ["code" => 1, "data" => $data, "last_page" => (int)$last_page, 'count' => (int)$count, 'pagesize' => (int)$pagesize, "current_page" => (int)$page];
+            $data = ["code" => 1, "data" => $data, "last_page" => (int) $last_page, 'count' => (int) $count, 'pagesize' => (int) $pagesize, "current_page" => (int) $page];
         } else {
             $data = ["code" => -1, "msg" => '获取失败'];
         }
         exit(json_encode($data));
         break;
-        // 帮助文档添加
+    // 帮助文档添加
     case 'help_add':
         is_admin();
         $status = trim(strip_tags(daddslashes($_POST['status'])));
@@ -993,7 +996,7 @@ switch ($act) {
             exit(json_encode(["code" => -1]));
         }
         break;
-        // 帮助文档更新
+    // 帮助文档更新
     case 'help_up':
         is_admin();
         $id = trim(strip_tags(daddslashes($_POST['id'])));
@@ -1016,7 +1019,7 @@ switch ($act) {
         exit(json_encode(["code" => 1]));
 
         break;
-        // 帮助文档排序
+    // 帮助文档排序
     case 'help_sort':
         // 接收POST请求中的type和id
         $type = $_POST['type'];
@@ -1076,7 +1079,7 @@ switch ($act) {
             echo "未找到相应的数据";
         }
         break;
-        // 帮助文档删除
+    // 帮助文档删除
     case 'help_del':
         is_admin();
         $sex = daddslashes($_POST['sex']);
@@ -1114,21 +1117,23 @@ switch ($act) {
         $last_page = ceil($count / $pagesize); //取最大页数
 
         if ($a) {
-            $data = ["a" => $sql, "code" => 1, "data" => $data, "last_page" => (int)$last_page, 'count' => (int)$count, 'pagesize' => (int)$pagesize, "current_page" => (int)$page];
+            $data = ["a" => $sql, "code" => 1, "data" => $data, "last_page" => (int) $last_page, 'count' => (int) $count, 'pagesize' => (int) $pagesize, "current_page" => (int) $page];
         } else {
             $data = ["code" => -1, "msg" => '获取失败'];
         }
         exit(json_encode($data));
         break;
-        // 订单补刷
+    // 订单补刷
     case 'bs':
         $oid = trim(strip_tags(daddslashes($_GET['oid'])));
         $b = $DB->get_row("select hid,cid,dockstatus,status,bsnum from qingka_wangke_order where oid='{$oid}' ");
         $DB->query("update qingka_wangke_user set bs1=bs1+1 where uid='{$userrow['uid']}' ");
         if ($b["bsnum"] >= $conf["api_bs"] && !empty($conf["api_bs"])) {
+            orderLogs($oid, $userrow['uid'], "订单补刷", "【手动单个】补刷失败，当前已补刷". $conf["api_bs"] . "次，达到上限", "0");
             jsonReturn(-1, "已补刷" . $conf["api_bs"] . "次，不能再补刷了！");
         }
         if ($b['dockstatus'] == '99') {
+            orderLogs($oid, $userrow['uid'], "订单补刷", "【手动单个】成功加入线程，排队补刷中", "0");
             $DB->query("update qingka_wangke_order set status='待处理',`bsnum`=bsnum+1 where oid='{$oid}' ");
             jsonReturn(1, "成功加入线程，排队补刷中");
         }
@@ -1139,10 +1144,13 @@ switch ($act) {
             jsonReturn(-1, "该处理状态订单无法补刷！");
         } else {
             $b = budanWk($oid);
+            $msg = empty($b["msg"])?"未知错误":$b["msg"];
             if ($b['code'] == 1) {
+                orderLogs($oid, $userrow['uid'], "订单补刷", "【手动单个】补刷成功", "0");
                 $DB->query("update qingka_wangke_order set status='补刷中',`bsnum`=bsnum+1 where oid='{$oid}' ");
                 jsonReturn(1, $b['msg']);
             } else {
+                orderLogs($oid, $userrow['uid'], "订单补刷", "【手动单个】补刷失败：".$b["msg"], "0");
                 jsonReturn(-1, $b['msg']);
             }
         }
@@ -1183,12 +1191,14 @@ switch ($act) {
         } elseif ($row['dockstatus'] == '99') {
             //$result=pre_zy($oid);
             //exit(json_encode($result));
+            orderLogs($oid, $userrow['uid'], "同步进度", "【手动单个】实时进度无需更新", "0");
             jsonReturn(1, '实时进度无需更新');
         }
         $DB->query("update qingka_wangke_user set jd1=jd1+1 where uid='{$userrow['uid']}' ");
         $result = processCx($oid);
 
         if ($result["code"] === 404) {
+            orderLogs($oid, $userrow['uid'], "同步进度", "【手动单个】同步失败，上游通讯异常", "0");
             exit(json_encode(["code" => -1, "msg" => "上游通讯异常"]));
         }
         $result2 = array_filter($result, function ($item) use ($row) {
@@ -1204,17 +1214,19 @@ switch ($act) {
             $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['oid'];
             $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['id'];
             $result3['remarks'] = addslashes($result3['remarks']);
-            $ok =  $DB->query("update qingka_wangke_order set `name`='{$result3['name']}',`kcname`='{$result3['kcname']}',`yid`='{$result3['yid']}',`status`='{$result3['status_text']}',`dockstatus`='1',`courseStartTime`='{$result3['kcks']}',`courseEndTime`='{$result3['kcjs']}',`examStartTime`='{$result3['ksks']}',`examEndTime`='{$result3['ksjs']}',`process`='{$result3['process']}',`remarks`='{$result3['remarks']}' ,`uptime`='{$date}' where `user`='{$result3['user']}' and `oid`='{$oid}' and `yid`='{$result3['yid']}' ");
+            $ok = $DB->query("update qingka_wangke_order set `name`='{$result3['name']}',`kcname`='{$result3['kcname']}',`yid`='{$result3['yid']}',`status`='{$result3['status_text']}',`dockstatus`='1',`courseStartTime`='{$result3['kcks']}',`courseEndTime`='{$result3['kcjs']}',`examStartTime`='{$result3['ksks']}',`examEndTime`='{$result3['ksjs']}',`process`='{$result3['process']}',`remarks`='{$result3['remarks']}' ,`uptime`='{$date}' where `user`='{$result3['user']}' and `oid`='{$oid}' and `yid`='{$result3['yid']}' ");
             if ($ok) {
+                orderLogs($oid, $userrow['uid'], "同步进度", "【手动单个】最新进度：".$result3['remarks'], "0");
                 exit(json_encode(["code" => 1, "msg" => "同步成功", "data" => $result]));
             } else {
+                orderLogs($oid, $userrow['uid'], "同步进度", "【手动单个】同步失败", "0");
                 exit(json_encode(["code" => -1, "msg" => "同步失败", "data" => $result]));
             }
         } else {
             // 如果yid查不出来
             $result2 = array_filter($result, function ($item) use ($row) {
                 // 课程名称相似度
-                return $item["user"] == $row["user"] &&  $item["kcname"] == $row["kcname"];
+                return $item["user"] == $row["user"] && $item["kcname"] == $row["kcname"];
             });
             $result2 = array_values($result2);
             if (count($result2) > 0) {
@@ -1223,14 +1235,18 @@ switch ($act) {
                 $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['oid'];
                 $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['id'];
                 $result3['remarks'] = addslashes($result3['remarks']);
-                $ok =  $DB->query("update qingka_wangke_order set `name`='{$result3['name']}',`status`='{$result3['status_text']}',`yid`='{$result3['yid']}',`dockstatus`='1',`courseStartTime`='{$result3['kcks']}',`courseEndTime`='{$result3['kcjs']}',`examStartTime`='{$result3['ksks']}',`examEndTime`='{$result3['ksjs']}',`process`='{$result3['process']}',`remarks`='{$result3['remarks']}' ,`uptime`='{$date}' where `user`='{$result3['user']}' and `kcname`='{$result3['kcname']}' ");
+                $ok = $DB->query("update qingka_wangke_order set `name`='{$result3['name']}',`status`='{$result3['status_text']}',`yid`='{$result3['yid']}',`dockstatus`='1',`courseStartTime`='{$result3['kcks']}',`courseEndTime`='{$result3['kcjs']}',`examStartTime`='{$result3['ksks']}',`examEndTime`='{$result3['ksjs']}',`process`='{$result3['process']}',`remarks`='{$result3['remarks']}' ,`uptime`='{$date}' where `user`='{$result3['user']}' and `kcname`='{$result3['kcname']}' ");
                 if ($ok) {
+                    orderLogs($oid, $userrow['uid'], "同步进度", "【手动单个】最新进度：".$result3['remarks'], "0");
                     exit(json_encode(["code" => 1, "msg" => "同步成功", "data" => $result]));
                 } else {
+                    orderLogs($oid, $userrow['uid'], "同步进度", "【手动单个】同步失败", "0");
                     exit(json_encode(["code" => -1, "msg" => "同步失败", "data" => $result]));
                 }
             } else {
-                exit(json_encode(["code" => -1, "msg" =>  empty($result["msg"])?"同步失败，无匹配项":$result["msg"], "data" => [] ]));
+                $msg = empty($result["msg"]) ? "无匹配项" : $result["msg"];
+                orderLogs($oid, $userrow['uid'], "同步进度", "【手动单个】同步失败：".$msg, "0");
+                exit(json_encode(["code" => -1, "msg" => "同步失败".$msg, "data" => []]));
             }
         }
 
@@ -1250,7 +1266,7 @@ switch ($act) {
             jsonReturn(1, "取消成功");
         }
         break;
-        // 订单列表
+    // 订单列表
     case 'orderlist':
         $cx = daddslashes($_POST['cx']);
         $page = trim(strip_tags(daddslashes($_POST['page'])));
@@ -1310,7 +1326,7 @@ switch ($act) {
         $sql = $sql1 . $sql2 . $sql3 . $sql4 . $sql5 . $sql6 . $sql7 . $sql8 . $sql9;
         $a = $DB->query("select * from qingka_wangke_order {$sql} order by oid desc limit $pageu,$pagesize ");
         $count1 = $DB->count("select count(*) from qingka_wangke_order {$sql} ");
-        $data =  [];
+        $data = [];
         while ($row = $DB->fetch($a)) {
             if ($row['name'] == '' || $row['name'] == 'undefined') {
                 $row['name'] = 'null';
@@ -1318,27 +1334,55 @@ switch ($act) {
             $data[] = $row;
         }
         $last_page = ceil($count1 / $pagesize); //取最大页数
-        $data = array('a' => $sql3, 'code' => 1, 'data' => $data, "current_page" => (int)$page, "last_page" => $last_page, "uid" => (int)$userrow['uid'], 'count' => $count1, "pagesize" => $pagesize);
+        $data = array('a' => $sql3, 'code' => 1, 'data' => $data, "current_page" => (int) $page, "last_page" => $last_page, "uid" => (int) $userrow['uid'], 'count' => $count1, "pagesize" => $pagesize);
         exit(json_encode($data));
         break;
-        // 对接处理
+    // 获取订单日志
+    case "orderLogs_get":
+        $oid = trim(strip_tags($_POST["oid"]));
+        if(empty($oid)){
+            jsonReturn(-1,"非法请求");
+        }
+        $order = $DB->get_row("select uid from qingka_wangke_order where oid='{$oid}' ");
+        if(empty($order)){
+            jsonReturn(-1,"订单不存在");
+        }
+        
+        $orderLogsReturn = $DB->query("select * from qingka_wangke_orderLogs where oid='{$oid}' order by olid desc ");
+        
+        $data = [];
+        while($row = $DB->fetch($orderLogsReturn)){
+            $user = $DB->get_row("select name from qingka_wangke_user where uid='{$row['uid']}' ");
+            $row["user"] = $user["name"];
+            
+            $data[] = $row;
+        }
+        exit(json_encode(["code"=>1,"data"=>$data,"msg"=>"成功"]));
+        break;
+    // 对接处理
     case 'duijie':
         is_admin();
         $oid = trim(strip_tags(daddslashes($_GET['oid'])));
         $b = $DB->get_row("select * from qingka_wangke_order where oid='$oid' limit 1 ");
         $d = $DB->get_row("select * from qingka_wangke_class where cid='{$b['cid']}' ");
+        orderLogs($oid, $userrow['uid'], "订单提交", "【手动单个】开始提交到渠道", "0");
         $result = addWk($oid);
+        
+        $msg = empty($result["msg"])?"未知错误":$result["msg"];
 
         if ($result['code'] == '1') {
+            orderLogs($oid, $userrow['uid'], "订单提交", "【手动单个】提交成功", "0");
             $DB->query("update qingka_wangke_order set `hid`='{$b['hid']}',`status`='进行中',`dockstatus`=1,`yid`='{$result['id']}',`remarks`='订单已录入服务器，等待进程自动开始' where oid='{$oid}' "); //对接成功  
         } elseif ($result['code'] == '-69') {
+            orderLogs($oid, $userrow['uid'], "订单提交", "【手动单个】未提交：重复下单", "0");
             $DB->query("update qingka_wangke_order set `status`='重复下单',`dockstatus`=3 where oid='{$oid}' ");
         } else {
+            orderLogs($oid, $userrow['uid'], "订单提交", "【手动单个】提交失败：".$msg, "0");
             $DB->query("update qingka_wangke_order set `dockstatus`=2 where oid='{$oid}' ");
         }
         exit(json_encode($result, true));
         break;
-        // 获取商品
+    // 获取商品
     case 'getclass':
         $a = $DB->query("select * from qingka_wangke_class where status=1 order by sort asc");
         $cids = [];
@@ -1385,7 +1429,7 @@ switch ($act) {
                 $price = $price1;
             }
 
-            $price = $price < 0.001 ? 0.001: sprintf("%.3f", $price);
+            $price = $price < 0.001 ? 0.001 : sprintf("%.3f", $price);
 
             $cids[] = $row['cid'];
             $data[$row['cid']] = array(
@@ -1421,7 +1465,7 @@ switch ($act) {
         exit(json_encode($data));
 
         break;
-        // 获取商品分类
+    // 获取商品分类
     case 'getclassfl':
         $fenlei = trim(strip_tags(daddslashes($_POST['id'])));
         if ($fenlei == "") {
@@ -1480,7 +1524,7 @@ switch ($act) {
                 $price = $row['suo'];
             }
 
-            $price = $price < 0.001 ? 0.001: sprintf("%.3f", $price);
+            $price = $price < 0.001 ? 0.001 : sprintf("%.3f", $price);
 
             $cids[] = $row['cid'];
             $data[$row['cid']] = array(
@@ -1528,7 +1572,7 @@ switch ($act) {
         exit(json_encode($data));
 
         break;
-        // 商品删除
+    // 商品删除
     case 'class_del':
         is_admin();
         $sex = daddslashes($_POST['sex']);
@@ -1546,7 +1590,7 @@ switch ($act) {
         $DB->query("delete from qingka_wangke_class where cid='$cid' ");
         jsonReturn(1, "删除成功");
         break;
-        // 商品列表
+    // 商品列表
     case 'classlist':
         $cx = daddslashes($_POST['cx']);
         $classname = daddslashes($_POST['classname']);
@@ -1586,7 +1630,7 @@ switch ($act) {
                 $data[] = $row;
             }
             foreach ($data as $key => $rows) {
-                $sort[$key]  = $rows['sort'];
+                $sort[$key] = $rows['sort'];
                 $cid[$key] = $rows['cid'];
                 $name[$key] = $rows['name'];
                 $getnoun[$key] = $rows['getnoun'];
@@ -1606,13 +1650,13 @@ switch ($act) {
             $max_sort_cid = $DB->get_row("select cid from qingka_wangke_class order by sort desc ")["cid"];
             $min_sort_cid = $DB->get_row("select cid from qingka_wangke_class order by sort  ASC ")["cid"];
 
-            $data = array('code' => 1, 'data' => $data, "current_page" => (int)$page, "last_page" => $last_page, "count" => $count1, "pagesize" => $pagesize, 'max_sort_cid' => $max_sort_cid, 'min_sort_cid' => $min_sort_cid);
+            $data = array('code' => 1, 'data' => $data, "current_page" => (int) $page, "last_page" => $last_page, "count" => $count1, "pagesize" => $pagesize, 'max_sort_cid' => $max_sort_cid, 'min_sort_cid' => $min_sort_cid);
             exit(json_encode($data));
         } else {
             exit('{"code":-2,"msg":"你在干啥"}');
         }
         break;
-        // 更新商品
+    // 更新商品
     case 'upclass':
         is_admin();
         parse_str(daddslashes($_POST['data']), $row); //将字符串解析成多个变量
@@ -1633,55 +1677,55 @@ switch ($act) {
         break;
     case "upclass_pl":
         is_admin();
-        
+
         $fenlei = trim(strip_tags(daddslashes($_POST['fenlei'])));
         $status = trim(strip_tags(daddslashes($_POST['status'])));
         $price = trim(strip_tags(daddslashes($_POST['price'])));
         $yunsuan = trim(strip_tags(daddslashes($_POST['yunsuan'])));
         $nocheck = trim(strip_tags(daddslashes($_POST['nocheck'])));
         $changePass = trim(strip_tags(daddslashes($_POST['changePass'])));
-        
+
         $sex = daddslashes($_POST['sex']);
-        if(count($sex) == 0){
-            jsonReturn("-1","请传入商品id");
+        if (count($sex) == 0) {
+            jsonReturn("-1", "请传入商品id");
         }
-        
+
         $sucess_num = 0;
         foreach ($sex as $key => $row) {
-            
-            if($fenlei !== ''){
+
+            if ($fenlei !== '') {
                 $ok = $DB->query("update qingka_wangke_class set fenlei={$fenlei} where cid={$row}");
             }
-            
-            if($status !== ''){
+
+            if ($status !== '') {
                 $ok = $DB->query("update qingka_wangke_class set status={$status} where cid={$row}");
             }
-            
-            if($price !== ''){
+
+            if ($price !== '') {
                 $ok = $DB->query("update qingka_wangke_class set price={$price} where cid={$row}");
             }
-            
-            if($yunsuan !== ''){
+
+            if ($yunsuan !== '') {
                 $ok = $DB->query("update qingka_wangke_class set yunsuan='{$yunsuan}' where cid={$row}");
             }
-            
-            if($nocheck !== ''){
+
+            if ($nocheck !== '') {
                 $ok = $DB->query("update qingka_wangke_class set nocheck='{$nocheck}' where cid={$row}");
             }
-            
-            if($changePass !== ''){
+
+            if ($changePass !== '') {
                 $ok = $DB->query("update qingka_wangke_class set changePass='{$changePass}' where cid={$row}");
             }
-            
-            if(!empty($ok)){
+
+            if (!empty($ok)) {
                 $sucess_num = $sucess_num + 1;
             }
-            
+
         }
-        exit(json_encode( ["code"=>1,"msg"=>"成功修改".$sucess_num."个条商品"] ));
+        exit(json_encode(["code" => 1, "msg" => "成功修改" . $sucess_num . "个条商品"]));
         break;
-        // 商品排序
-    case  'class_sort':
+    // 商品排序
+    case 'class_sort':
         is_admin();
         $type = empty(daddslashes($_POST['type'])) ? 'down' : daddslashes($_POST['type']);
         $cid = daddslashes($_POST['cid']);
@@ -1711,15 +1755,15 @@ switch ($act) {
         $now_class = $DB->get_row("select sort,cid from qingka_wangke_class where cid=$cid");
 
         // 开始上下移动
-        if ($type ===  'top') {
+        if ($type === 'top') {
             $min_sort = $DB->get_row("select cid,sort from qingka_wangke_class order by sort  ASC ")["sort"];
             $min_sort = $min_sort - 1;
             $DB->query("update qingka_wangke_class set sort=$min_sort where cid=$cid");
-        } elseif ($type ===  'bottom') {
+        } elseif ($type === 'bottom') {
             $max_sort = $DB->get_row("select cid,sort from qingka_wangke_class order by sort desc ")["sort"];
             $max_sort = $max_sort + 1;
             $DB->query("update qingka_wangke_class set sort=$max_sort where cid=$cid");
-        } elseif ($type ===  'up') {
+        } elseif ($type === 'up') {
             $up_class = $DB->get_row("select sort,cid from qingka_wangke_class where sort=(select max(sort) from qingka_wangke_class where sort < '{$now_class['sort']}') ");
             if (empty($up_class)) {
                 jsonReturn(-1, "不能再往上移了");
@@ -1739,7 +1783,7 @@ switch ($act) {
 
         exit(json_encode(["code" => 1, "msg" => "成功"]));
         break;
-        // 删除货源
+    // 删除货源
     case 'huoyuan_del':
         is_admin();
 
@@ -1755,7 +1799,7 @@ switch ($act) {
             jsonReturn(-1, "删除失败");
         }
         break;
-        // 货源列表
+    // 货源列表
     case 'getHMoney':
         $hid = daddslashes($_POST['hid']);
         if ($hid === '') {
@@ -1810,13 +1854,13 @@ switch ($act) {
                 $order_num = $DB->count("select count(hid) from qingka_wangke_order where hid='{$value['hid']}' ");
                 $data[$key]["order_num"] = $order_num;
             }
-            $data = array('code' => 1, 'data' => $data, "current_page" => (int)$page, "last_page" => $last_page);
+            $data = array('code' => 1, 'data' => $data, "current_page" => (int) $page, "last_page" => $last_page);
             exit(json_encode($data));
         } else {
             exit('{"code":-2,"msg":"你在干啥"}');
         }
         break;
-        // 更新货源
+    // 更新货源
     case 'uphuoyuan':
         is_admin();
         parse_str(daddslashes($_POST['data']), $row); //将字符串解析成多个变量
@@ -1833,7 +1877,7 @@ switch ($act) {
             exit('{"code":-2,"msg":"无权限"}');
         }
         break;
-        // 退款
+    // 退款
     case 'tk':
         $sex = daddslashes($_POST['sex']);
         if ($userrow['uid'] == 1) {
@@ -1850,7 +1894,7 @@ switch ($act) {
             exit('{"code":-1,"msg":"无权限"}');
         }
         break;
-        // 删除订单
+    // 删除订单
     case 'sc':
         is_admin();
         $sex = daddslashes($_POST['sex']);
@@ -1867,23 +1911,29 @@ switch ($act) {
             exit('{"code":-1,"msg":"别乱搞，单子丢了钱你赔吗？"}');
         }
         break;
-        // 订单所属代理转单 
+    // 订单所属代理转单 
     case 'xgdl':
         is_admin();
         $sex = daddslashes($_POST['sex']);
         $setuid = daddslashes($_POST['uid']);
+        $newUser = $DB->get_row("select uid,name from qingka_wangke_user where uid='{$setuid}' ");
 
         if ($userrow['uid'] == 1) {
             for ($i = 0; $i < count($sex); $i++) {
                 $oid = $sex[$i];
+                
+                $order = $DB->get_row("select uid from qingka_wangke_order where oid='{$oid}' ");
+                $oldUser = $DB->get_row("select uid,name from qingka_wangke_user where uid='{$order['uid']}' ");
+                
                 $order = $DB->query("update qingka_wangke_order set uid='{$setuid}' where oid='{$oid}' ");
+                orderLogs($oid, $userrow['uid'], "订单转单", "订单所属代理从 [".$oldUser["uid"]."]".$oldUser["name"]." 修改为 [".$newUser["uid"]."]".$newUser["name"], "0");
             }
             exit('{"code":1,"msg":"选择的订单已批量修改！"}');
         } else {
             exit('{"code":-1,"msg":"别乱搞，单子丢了钱你赔吗？"}');
         }
         break;
-        // 修改订单在上游的密码
+    // 修改订单在上游的密码
     case "changePass":
         $sex = daddslashes($_POST['sex']);
         $setpass = daddslashes($_POST['pass']);
@@ -1924,7 +1974,7 @@ switch ($act) {
             $POSTYPE = $a["changePass_type"];
 
             $data = [];
-            eval("\$data = [$changePass_cs];");
+            eval ("\$data = [$changePass_cs];");
             $header = [
                 'Content-type:application/x-www-form-urlencoded',
                 "token: " . $token,
@@ -1997,7 +2047,7 @@ switch ($act) {
             exit('{"code":-1,"msg":"无权限"}');
         }
         break;
-        // 删除代理
+    // 删除代理
     case 'deluser':
         is_admin();
         $sex = daddslashes($_POST['sex']);
@@ -2012,7 +2062,7 @@ switch ($act) {
             exit('{"code":-1,"msg":"别乱搞，代理丢了钱你赔吗？"}');
         }
         break;
-        // 添加代理
+    // 添加代理
     case 'adduser':
         if ($conf['user_htkh'] == '0') {
             jsonReturn(-1, "暂停开户，具体开放时间等通知");
@@ -2025,7 +2075,8 @@ switch ($act) {
         if ($row['name'] == '' || $row['user'] == '' || $row['pass'] == '' || $row['addprice'] == '') {
             exit('{"code":-2,"msg":"所有项目不能为空"}');
         }
-        if (!preg_match('/[1-9]([0-9]{4,10})/', $row['user'])) exit('{"code":-1,"msg":"账号必须为QQ号"}');
+        if (!preg_match('/[1-9]([0-9]{4,10})/', $row['user']))
+            exit('{"code":-1,"msg":"账号必须为QQ号"}');
         if ($DB->get_row("select * from qingka_wangke_user where user='{$row['user']}' ")) {
             exit('{"code":-1,"msg":"该账号已存在"}');
         }
@@ -2040,7 +2091,7 @@ switch ($act) {
         // 		if($row['addprice']*100 % 5 !=0){
         //     		jsonReturn(-1,"请输入单价为0.05的倍数");
         // 	    }
-        if ($row['addprice'] < 0.2 ) {
+        if ($row['addprice'] < 0.2) {
             jsonReturn(-1, "费率不合法！");
         }
 
@@ -2091,26 +2142,26 @@ switch ($act) {
     case "user2id":
         $user2id_return = $DB->query("select uid,name from qingka_wangke_user");
         $data = [];
-        while($row = $DB->fetch($user2id_return)){
+        while ($row = $DB->fetch($user2id_return)) {
             $data[] = $row;
         }
-        exit(json_encode( ["code" => 1, "data" => $data] ));
+        exit(json_encode(["code" => 1, "data" => $data]));
         break;
     case "dl_idname":
         $dl_idname_return = $DB->query("select uid,name,active from qingka_wangke_user order by CASE WHEN uid = 1 THEN 0 ELSE 1 END, CAST(uid AS UNSIGNED) desc");
         $data = [];
-        while($row = $DB->fetch($dl_idname_return)){
+        while ($row = $DB->fetch($dl_idname_return)) {
             $data[] = $row;
         }
-        exit(json_encode( ["code" => 1, "data" => $data] ));
+        exit(json_encode(["code" => 1, "data" => $data]));
         break;
-        // 代理列表
+    // 代理列表
     case 'userlist':
         $type = trim(strip_tags(daddslashes($_POST['type'])));
         $qq = trim(strip_tags(daddslashes($_POST['qq'])));
         // $qq = preg_replace('/[^a-zA-Z0-9]/', '', $qq);
         $page = trim(daddslashes($_POST['page']));
-        $pagesize = trim(strip_tags($_POST['pagesize'])) ? trim(strip_tags($_POST['pagesize'])) : 15;
+        $pagesize = trim(strip_tags($_POST['pagesize'])) ? (float) trim(strip_tags($_POST['pagesize'])) : 15;
         $pageu = ($page - 1) * $pagesize; //当前界面		
 
         $sql = "where uid != 1";
@@ -2152,8 +2203,16 @@ switch ($act) {
             }
         }
 
+        // 统计
+        if ($userrow["uid"] == 1) {
+            $tongji = ["money_waitUse" => 0, "user_active" => 0, "admin_user" => 0,];
+            $tongji["money_waitUse"] = (float) $DB->count("select COALESCE(sum(money),0) from qingka_wangke_user where uid!=1 and active=1 and COALESCE(STR_TO_DATE(SUBSTRING_INDEX(endtime, '--', 1), '%Y-%m-%d %H:%i:%s'), '1900-01-01 00:00:00') >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)");
+            $tongji["user_active"] = (float) $DB->count("select COALESCE(count(uid),0) from qingka_wangke_user where uid!=1 and active=1 and COALESCE(STR_TO_DATE(SUBSTRING_INDEX(endtime, '--', 1), '%Y-%m-%d %H:%i:%s'), '1900-01-01 00:00:00') >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)");
+            $tongji["admin_user"] = (float) $DB->count("select COALESCE(count(uid),0) from qingka_wangke_user where uid!=1 and uuid=1");
+        }
+
         $a = $DB->query("select * from qingka_wangke_user {$sql} order by uid desc limit $pageu,$pagesize ");
-        $count1 = $DB->count("select count(*) from qingka_wangke_user {$sql}");
+        $count1 = (float) $DB->count("select count(*) from qingka_wangke_user {$sql}");
         while ($row = $DB->fetch($a)) {
             $zcz = 0;
             if ($userrow['uid'] == '1') {
@@ -2169,18 +2228,27 @@ switch ($act) {
             $dd = $DB->count("select count(oid) from qingka_wangke_order where uid='{$row['uid']}' and uid != 1 ");
             //$zcz=$DB->count("select sum(money) as money from qingka_wangke_log where type='上级充值' and uid='{$row['uid']}' ");
             $row['dd'] = $dd;
-            //$row['zcz']=round($zcz,2);
+            // $row['aa'] = $DB-> count("select count(uid) from qingka_wangke_user where uuid='{$row['uid']}' ");
+            $row['dl_num'] = $DB->count("select count(uid) from qingka_wangke_user where uuid='{$row['uid']}' ");
+            if (empty($dd)) {
+                $tongji["money_waitUse"] = $tongji["money_waitUse"] - $row["money"];
+            }
+
+            // $row["dl_num"] = 0;
+
             $data[] = $row;
         }
+
+
         $last_page = ceil($count1 / $pagesize); //取最大页数
-        $data = array('code' => 1, 'data' => $data, "current_page" => (int)$page, "last_page" => $last_page, "count" => $count1, "pagesize" => $pagesize);
+        $data = array('code' => 1, 'tongji' => $tongji, 'data' => $data, "current_page" => (int) $page, "last_page" => $last_page, "count" => $count1, "pagesize" => $pagesize);
         exit(json_encode($data));
         break;
-        // 支付列表
+    // 支付列表
     case 'paylist':
         $page = trim(daddslashes($_POST['page']));
         $limit = trim(daddslashes($_POST['limit']));
-        $pageu = ($page - 1)  * $limit; //当前界面	
+        $pageu = ($page - 1) * $limit; //当前界面	
 
         $sql = ($userrow['uid'] == '1' ? 'where oid!=0 ' : "where uid = '{$userrow['uid']}'  ") . " and ((type!='tourist' and type!='tourist1') OR type IS NULL)  ";
         // exit($sql);
@@ -2223,7 +2291,7 @@ switch ($act) {
         array_multisort($sort, SORT_ASC, $rate, SORT_ASC, $data);
         exit(json_encode(['code' => 1, 'data' => $data, "count" => $count]));
         break;
-        // 课程id列表
+    // 课程id列表
     case 'kcidlist':
         $page = trim(daddslashes($_GET['page']));
         $limit = trim(daddslashes($_GET['limit']));
@@ -2251,7 +2319,7 @@ switch ($act) {
         $data = array('code' => 1, 'data' => $data, "count" => $count);
         exit(json_encode($data));
         break;
-        // 日志列表
+    // 日志列表
     case 'log':
         $page = trim(daddslashes($_GET['page']));
         $limit = trim(daddslashes($_GET['limit']));
@@ -2281,7 +2349,7 @@ switch ($act) {
         $data = array('code' => 1, 'data' => $data, "count" => $count);
         exit(json_encode($data));
         break;
-        // 获等级
+    // 获等级
     case 'adddjlist':
         $a = $DB->query("select * from qingka_wangke_dengji where status=1 and rate>='{$userrow['addprice']}' order by sort desc");
         while ($row = $DB->fetch($a)) {
@@ -2293,7 +2361,7 @@ switch ($act) {
             );
         }
         foreach ($data as $key => $row) {
-            $sort[$key]  = $row['sort'];
+            $sort[$key] = $row['sort'];
             $name[$key] = $row['name'];
             $rate[$key] = $row['rate'];
             $money[$key] = $row['money'];
@@ -2302,7 +2370,7 @@ switch ($act) {
         $data = array('code' => 1, 'data' => $data);
         exit(json_encode($data));
         break;
-        // 代理公告
+    // 代理公告
     case 'user_notice':
         $notice = trim(strip_tags(daddslashes($_POST['notice'])));
         if ($DB->query("update qingka_wangke_user set notice='{$notice}' where uid='{$userrow['uid']}' ")) {
@@ -2315,7 +2383,8 @@ switch ($act) {
     case 'userjk':
         $uid = trim(strip_tags(daddslashes($_POST['uid'])));
         $money = trim(strip_tags(daddslashes($_POST['money'])));
-        if (!preg_match('/^[0-9.]+$/', $money)) exit('{"code":-1,"msg":"充值金额不合法"}');
+        if (!preg_match('/^[0-9.]+$/', $money))
+            exit('{"code":-1,"msg":"充值金额不合法"}');
         //充值扣费计算：扣除费用=充值金额*(我的总费率/代理费率-等级差*2%)
         if ($money < 10 && $userrow['uid'] != 1) {
             exit('{"code":-1,"msg":"最低充值10"}');
@@ -2348,7 +2417,8 @@ switch ($act) {
     case 'userkc1':
         $uid = trim(strip_tags(daddslashes($_POST['uid'])));
         $money = trim(strip_tags(daddslashes($_POST['money'])));
-        if (!preg_match('/^[0-9.]+$/', $money)) exit('{"code":-1,"msg":"金额不合法"}');
+        if (!preg_match('/^[0-9.]+$/', $money))
+            exit('{"code":-1,"msg":"金额不合法"}');
         //充值扣费计算：扣除费用=充值金额*(我的总费率/代理费率-等级差*2%)
 
         $row = $DB->get_row("select * from qingka_wangke_user where uid='$uid' limit 1");
@@ -2381,7 +2451,8 @@ switch ($act) {
         $uid = trim(strip_tags(daddslashes(trim($row['uid']))));
         $addprice = trim(strip_tags(daddslashes($row['addprice'])));
         $type = trim(strip_tags(daddslashes($_POST['type'])));
-        if (!preg_match('/^[0-9.]+$/', $addprice)) exit('{"code":-1,"msg":"费率不合法"}');
+        if (!preg_match('/^[0-9.]+$/', $addprice))
+            exit('{"code":-1,"msg":"费率不合法"}');
 
         $row = $DB->get_row("select * from qingka_wangke_user where uid='$uid' limit 1");
         if ($row['uuid'] != $userrow['uid'] && $userrow['uid'] != 1) {
@@ -2439,7 +2510,7 @@ switch ($act) {
         if ($type != 1) {
             jsonReturn(1, "改价手续费3，并自动给下级[UID:{$uid}]充值{$cz}，将扣除{$kochu}余额");
         }
-            
+
         if ($userrow['money'] < $kochu) {
             jsonReturn(-1, "余额不足,改价需扣3手续费,及余额{$kochu}");
         } else {
@@ -2549,7 +2620,7 @@ switch ($act) {
             $data[] = $row;
         }
         $last_page = ceil($count1 / $pagesize); //取最大页数
-        $data = array('code' => 1, 'data' => $data, "current_page" => (int)$page, "last_page" => $last_page, "count" => $count1);
+        $data = array('code' => 1, 'data' => $data, "current_page" => (int) $page, "last_page" => $last_page, "count" => $count1);
         exit(json_encode($data));
         break;
     case 'djlist':
@@ -2559,7 +2630,7 @@ switch ($act) {
         if ($userrow['uid'] != '1') {
             jsonReturn(-1, "无权限");
         }
-        
+
         $allClass = $DB->query("select id from qingka_wangke_dengji order by CAST(sort AS UNSIGNED) asc");
         $allClass_data = [];
         while ($row = $DB->fetch($allClass)) {
@@ -2569,7 +2640,7 @@ switch ($act) {
             $sort2 = $key + 1;
             $DB->query("update qingka_wangke_dengji set sort=$sort2 where id='{$value['id']}' ");
         }
-        
+
         $a = $DB->query("select * from qingka_wangke_dengji ORDER BY sort");
         $count1 = $DB->count("select count(*) from qingka_wangke_dengji");
         while ($row = $DB->fetch($a)) {
@@ -2588,10 +2659,10 @@ switch ($act) {
         }
         array_multisort($sort, SORT_ASC, $rate, SORT_ASC, $data);
         $last_page = ceil($count1 / $pagesize); //取最大页数
-        $data = array('code' => 1, 'data' => $data, "current_page" => (int)$page, "last_page" => $last_page);
+        $data = array('code' => 1, 'data' => $data, "current_page" => (int) $page, "last_page" => $last_page);
         exit(json_encode($data));
         break;
-        // 添加等级
+    // 添加等级
     case 'dj':
         is_admin();
         $data = daddslashes($_POST['data']);
@@ -2632,7 +2703,7 @@ switch ($act) {
             jsonReturn(-1, "不知道你在干什么");
         }
         break;
-        // 等级删除
+    // 等级删除
     case 'dj_del':
         is_admin();
         $id = daddslashes($_POST['id']);
@@ -2669,17 +2740,17 @@ switch ($act) {
         }
 
         $now_class = $DB->get_row("select sort,id from qingka_wangke_dengji where id=$id");
-        $now_class['sort'] = (int)$now_class['sort'];
+        $now_class['sort'] = (int) $now_class['sort'];
         // 开始上下移动
-        if ($type ===  'top') {
+        if ($type === 'top') {
             $min_sort = $DB->get_row("select id,sort from qingka_wangke_dengji order by CAST(sort AS UNSIGNED)  ASC ")["sort"];
             $min_sort = $min_sort - 1;
             $DB->query("update qingka_wangke_dengji set sort=$min_sort where id=$id");
-        } elseif ($type ===  'bottom') {
+        } elseif ($type === 'bottom') {
             $max_sort = $DB->get_row("select id,sort from qingka_wangke_dengji order by CAST(sort AS UNSIGNED) desc ")["sort"];
             $max_sort = $max_sort + 1;
             $DB->query("update qingka_wangke_dengji set sort=$max_sort where id=$id");
-        } elseif ($type ===  'up') {
+        } elseif ($type === 'up') {
             $up_class = $DB->get_row("select sort,id from qingka_wangke_dengji where CAST(sort AS UNSIGNED)=(select max(CAST(sort AS UNSIGNED)) from qingka_wangke_dengji where CAST(sort AS UNSIGNED) < '{$now_class['sort']}') ");
             if (empty($up_class)) {
                 jsonReturn(-1, "不能再往上移了");
@@ -2700,7 +2771,7 @@ switch ($act) {
 
         exit(json_encode(["code" => 1, "msg" => "成功"]));
         break;
-        // 货源删除
+    // 货源删除
     case 'hy_del':
         is_admin();
         $hid = daddslashes($_POST['hid']);
@@ -2710,7 +2781,7 @@ switch ($act) {
         $DB->query("delete from qingka_wangke_huoyuan where hid='$hid' ");
         jsonReturn(1, "删除成功");
         break;
-        // 分类类别
+    // 分类类别
     case 'fllist':
         $page = trim(strip_tags(daddslashes($_POST['page'])));
         $pagesize = 500;
@@ -2747,7 +2818,7 @@ switch ($act) {
         }
         foreach ($data as $key => $row) {
             $id[$key] = $row['id'];
-            $sort[$key]  = $row['sort'];
+            $sort[$key] = $row['sort'];
             $name[$key] = $row['name'];
             $rate[$key] = $row['rate'];
             $money[$key] = $row['money'];
@@ -2758,7 +2829,7 @@ switch ($act) {
         }
         array_multisort($sort, SORT_ASC, $rate, SORT_ASC, $data);
         $last_page = ceil($count1 / $pagesize); //取最大页数
-        $data = array('code' => 1, 'data' => $data, "current_page" => (int)$page, "last_page" => $last_page);
+        $data = array('code' => 1, 'data' => $data, "current_page" => (int) $page, "last_page" => $last_page);
         exit(json_encode($data));
         break;
     case 'fl':
@@ -2830,7 +2901,7 @@ switch ($act) {
             jsonReturn(-1, "不知道你在干什么");
         }
         break;
-        // 分类排序
+    // 分类排序
     case 'fenlei_sort':
         is_admin();
         // 接收POST请求中的type和id
@@ -2856,17 +2927,17 @@ switch ($act) {
         }
 
         $now_class = $DB->get_row("select sort,id from qingka_wangke_fenlei where id=$id");
-        $now_class['sort'] = (int)$now_class['sort'];
+        $now_class['sort'] = (int) $now_class['sort'];
         // 开始上下移动
-        if ($type ===  'top') {
+        if ($type === 'top') {
             $min_sort = $DB->get_row("select id,sort from qingka_wangke_fenlei order by CAST(sort AS UNSIGNED)  ASC ")["sort"];
             $min_sort = $min_sort - 1;
             $DB->query("update qingka_wangke_fenlei set sort=$min_sort where id=$id");
-        } elseif ($type ===  'bottom') {
+        } elseif ($type === 'bottom') {
             $max_sort = $DB->get_row("select id,sort from qingka_wangke_fenlei order by CAST(sort AS UNSIGNED) desc ")["sort"];
             $max_sort = $max_sort + 1;
             $DB->query("update qingka_wangke_fenlei set sort=$max_sort where id=$id");
-        } elseif ($type ===  'up') {
+        } elseif ($type === 'up') {
             $up_class = $DB->get_row("select sort,id from qingka_wangke_fenlei where CAST(sort AS UNSIGNED)=(select max(CAST(sort AS UNSIGNED)) from qingka_wangke_fenlei where CAST(sort AS UNSIGNED) < '{$now_class['sort']}') ");
             if (empty($up_class)) {
                 jsonReturn(-1, "不能再往上移了");
@@ -2941,7 +3012,7 @@ switch ($act) {
         // }
 
         break;
-        // 分类删除
+    // 分类删除
     case 'fl_del':
         is_admin();
 
@@ -2970,7 +3041,7 @@ switch ($act) {
 
         jsonReturn(1, "删除成功");
         break;
-        // 密价列表
+    // 密价列表
     case 'mijialist':
         is_admin();
         $page = trim(strip_tags(daddslashes($_POST['page'])));
@@ -3002,10 +3073,10 @@ switch ($act) {
             $data[] = $row;
         }
         $last_page = ceil($count1 / $pagesize); //取最大页数
-        $data = array('code' => 1, 'data' => $data, "current_page" => (int)$page, "last_page" => $last_page, "uid" => $userrow['uid'], "A" => $sql);
+        $data = array('code' => 1, 'data' => $data, "current_page" => (int) $page, "last_page" => $last_page, "uid" => $userrow['uid'], "A" => $sql);
         exit(json_encode($data));
         break;
-        // 添加密价
+    // 添加密价
     case 'mijia':
         is_admin();
         $data = daddslashes($_POST['data']);
@@ -3060,7 +3131,7 @@ switch ($act) {
             jsonReturn(-1, "不知道你在干什么");
         }
         break;
-        // 删除密价
+    // 删除密价
     case 'mijia_del':
         is_admin();
         $mid = daddslashes($_POST['mid']);
@@ -3071,7 +3142,7 @@ switch ($act) {
 
         jsonReturn(1, "删除成功");
         break;
-        // 上级迁移
+    // 上级迁移
     case 'sjqy':
         $uuid = daddslashes($_POST['uid']);
         $yqm = daddslashes($_POST['yqm']);
@@ -3113,13 +3184,13 @@ switch ($act) {
             }
         }
         break;
-        // 批量同步
+    // 批量同步
     case 'plzt':
         $redis = new Redis();
         $redis->connect("127.0.0.1", "6379");
         $sex = daddslashes($_POST['sex']);
         $rediscode = $redis->ping();
-        $sex_count  = count($sex);
+        $sex_count = count($sex);
         $DB->query("update qingka_wangke_user set jd1=jd1+$sex_count where uid='{$userrow['uid']}' ");
         if ($rediscode == true) {
             for ($i = 0; $i < count($sex); $i++) {
@@ -3133,7 +3204,7 @@ switch ($act) {
         }
 
         break;
-        // 批量补刷
+    // 批量补刷
     case 'plbs':
         $redis = new Redis();
         $redis->connect("127.0.0.1", "6379");
@@ -3159,7 +3230,7 @@ switch ($act) {
             jsonReturn(-1, "入队失败");
         }
         break;
-        // 一键对接老版
+    // 一键对接老版
     case 'yjdj':
         if ($userrow['uid'] == 1) {
             $hid = trim(strip_tags(daddslashes($_GET['hid'])));
@@ -3218,7 +3289,7 @@ switch ($act) {
                     $orderNum = $DB->count("select count(*) from qingka_wangke_order where uid='{$value['uid']}' ");
                     $data[] = [
                         "name" => substr($value["user"], 0, 4) . str_repeat('*', strlen($value["user"]) - 4),
-                        "orderNum" => (float)$orderNum,
+                        "orderNum" => (float) $orderNum,
                     ];
                 }
                 usort($data, function ($a, $b) {
@@ -3232,7 +3303,7 @@ switch ($act) {
                     $data[] = [
                         "cid" => $value["cid"],
                         "name" => $value["name"],
-                        "orderNum" => (float)$orderNum,
+                        "orderNum" => (float) $orderNum,
                     ];
                 }
                 usort($data, function ($a, $b) {
@@ -3249,7 +3320,7 @@ switch ($act) {
                     $data[] = [
                         "cid" => $value["cid"],
                         "name" => $value["name"],
-                        "orderNum" => (float)$orderNum,
+                        "orderNum" => (float) $orderNum,
                     ];
                 }
                 usort($data, function ($a, $b) {
@@ -3266,7 +3337,7 @@ switch ($act) {
                     $data[] = [
                         "cid" => $value["cid"],
                         "name" => $value["name"],
-                        "orderNum" => (float)$orderNum,
+                        "orderNum" => (float) $orderNum,
                     ];
                 }
                 usort($data, function ($a, $b) {
@@ -3281,11 +3352,11 @@ switch ($act) {
 
         exit(json_encode(["code" => 1, "data" => $data]));
         break;
-        // 获取首页实时公告
+    // 获取首页实时公告
     case "homenotice_get":
         // 仅取10条
         $DB->query("update qingka_wangke_homenotice SET readUIDS = CONCAT(readUIDS, '{$userrow['uid']},') where readUIDS NOT LIKE '%{$userrow['uid']},%' ");
-        
+
         $homenotice_return = $DB->query(" select sort,title,content,top,author,uptime,addtime,readUIDS from qingka_wangke_homenotice where status!=0 order by sort desc limit 10");
         $homenotice = [];
         while ($row = $DB->fetch($homenotice_return)) {
@@ -3303,8 +3374,8 @@ switch ($act) {
 
             $homenotice[] = $row;
         }
-        
-        jsonReturnData(1,$homenotice);
+
+        jsonReturnData(1, $homenotice);
         break;
 }
 $DB->close();

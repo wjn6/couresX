@@ -140,17 +140,20 @@ function processTask($taskId)
             $ok = $DB->get_row("update qingka_wangke_order set `hid`='{$d['docking']}',`status`='已提交',`dockstatus`=1,`yid`='{$result['id']}',`remarks`='订单已录入服务器，等待进程自动开始' where oid='{$row['oid']}' ");//对接成功
 
             if ($ok) {
+                orderLogs($oid, -999, "订单提交", "【自动批量】提交成功", "0");
               $logContent = formatLog($oid, "成功 \r\n返回: {$result['msg']}\r\n队列池剩余：{$redis->LLEN($codeType)}");
               writeLog($logFilePath, $logContent);
             } else {
               // 再次尝试
+              
               $DB->get_row("update qingka_wangke_order set `hid`='{$d['docking']}',`status`='已提交',`dockstatus`=1,`yid`='{$result['id']}',`remarks`='订单已录入服务器，等待进程自动开始' where oid='{$row['oid']}' ");//对接成功
+              orderLogs($oid, -999, "订单提交", "【自动批量】提交成功", "0");
               $logContent = formatLog($oid, "成功 \r\n返回: {$result['msg']}\r\n队列池剩余：{$redis->LLEN($codeType)}");
               writeLog($logFilePath, $logContent);
             }
           } else {
             $DB->get_row("update qingka_wangke_order set `dockstatus`=2 where oid='{$row['oid']}' ");
-
+            orderLogs($oid, -999, "订单提交", "【自动批量】提交失败：".$result['msg'], "0");
             $logContent = formatLog($oid, "失败 \r\n返回: {$result['msg']}\r\n队列池剩余：{$redis->LLEN($codeType)}");
             // 读取旧的日志内容
             writeLog($logFilePath, $logContent);
