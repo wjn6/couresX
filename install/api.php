@@ -5,7 +5,7 @@ $act = $_GET['act'] ?? '';
 include_once('../Checkorder/configuration.php');
 include_once('../confing/authcodeClass.php');
 
-$version = '2.0.0.9';
+$version = '2.0.1.0';
 
 $host = $_SERVER['HTTP_HOST'];
 
@@ -273,7 +273,7 @@ switch ($act) {
       'qingka_wangke_orderLogs' => array(
         'olid' => 'INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT "订单日志ID" ',
         'oid' => 'INT(11) COMMENT "订单ID" ',
-        'uuid' => 'INT(11) COMMENT "代理ID" ',
+        'uid' => 'INT(11) COMMENT "代理ID" ',
         'type' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT "" COMMENT "日志类型" ',
         'content' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT "" COMMENT "日志内容" ',
         'money' => 'VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT "0" COMMENT "金额变化" ',
