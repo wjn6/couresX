@@ -5,7 +5,7 @@ $act = $_GET['act'] ?? '';
 include_once('../Checkorder/configuration.php');
 include_once('../confing/authcodeClass.php');
 
-$version = '2.0.1.0';
+$version = '2.0.1.1';
 
 $host = $_SERVER['HTTP_HOST'];
 

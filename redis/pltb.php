@@ -147,7 +147,8 @@ function processTask($taskId)
 
                 $process_new = $result3["process"];
                 $status_new = !empty($result3["status"]) ? $result3["status"] : $result3["status_text"];
-                $remarks_new = $result3["remarks"];
+                $remarks_new = addslashes($result3['remarks']);
+                $result3['remarks'] = $remarks_new;
 
                 $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['oid'];
                 $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['id'];
@@ -166,7 +167,7 @@ function processTask($taskId)
                         $logContent = formatLog($oid, "状态无需更新！跳过。\r\n队列池剩余：{$redis->LLEN('oids')}");
                         writeLog($logFilePath, $logContent);
                     } else {
-                        orderLogs($oid, -999, "进度更新", "【手动批量】最新进度：".$row["remarks"], "0");
+                        orderLogs($oid, -999, "进度更新", "【手动批量】最新进度：".$result3["remarks"], "0");
                         $logContent = "状态更新：{$row['status']}=>{$status_new}\r\n进度更新：{$row['process']}=>{$process_new}\r\n备注更新：{$row['remarks']}=>{$remarks_new}\r\n队列池剩余：{$redis->LLEN('oids')}";
                         $logContent = formatLog($oid, '', $logContent);
                         writeLog($logFilePath, $logContent);
@@ -188,7 +189,8 @@ function processTask($taskId)
 
                     $process_new = $result3["process"];
                     $status_new = $result3["status"] ? $result3["status"] : $result3["status_text"];
-                    $remarks_new = $result3["remarks"];
+                    $remarks_new = addslashes($result3['remarks']);
+                    $result3['remarks'] = $remarks_new;
 
                     $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['oid'];
                     $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['id'];
@@ -204,7 +206,7 @@ function processTask($taskId)
                             $logContent = formatLog($oid, "状态无需更新！跳过。\r\n队列池剩余：{$redis->LLEN('oids')}");
                             writeLog($logFilePath, $logContent);
                         } else {
-                            orderLogs($oid, -999, "进度更新", "【手动批量】最新进度：".$row['remarks'], "0");
+                            orderLogs($oid, -999, "进度更新", "【手动批量】最新进度：".$result3['remarks'], "0");
                             $logContent = "状态更新：{$row['status']}=>{$status_new}\r\n进度更新：{$row['process']}=>{$process_new}\r\n备注更新：{$row['remarks']}=>{$remarks_new}\r\n队列池剩余：{$redis->LLEN('oids')}";
                             $logContent = formatLog($oid, '', $logContent);
                             writeLog($logFilePath, $logContent);

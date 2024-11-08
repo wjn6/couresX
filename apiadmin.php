@@ -1340,15 +1340,22 @@ switch ($act) {
     // 获取订单日志
     case "orderLogs_get":
         $oid = trim(strip_tags($_POST["oid"]));
+        
+        $page = empty($_POST["page"])?1:$_POST["page"];
+        $limit = empty($_POST["limit"])?10:$_POST["limit"];
+        $offset= ($page - 1)* $limit;
+        
         if(empty($oid)){
             jsonReturn(-1,"非法请求");
         }
-        $order = $DB->get_row("select uid from qingka_wangke_order where oid='{$oid}' ");
+        $order = $DB->get_row("select uid from qingka_wangke_order where oid='{$oid}' limit 1 ");
         if(empty($order)){
             jsonReturn(-1,"订单不存在");
         }
         
-        $orderLogsReturn = $DB->query("select * from qingka_wangke_orderLogs where oid='{$oid}' order by olid desc ");
+        $orderLogsReturn = $DB->query("select * from qingka_wangke_orderLogs where oid='{$oid}' order by olid desc limit $offset,$limit");
+        // 获取总数
+        $total = (int)$DB->count("select count(olid) from qingka_wangke_orderLogs where oid='{$oid}' order by olid desc ");
         
         $data = [];
         while($row = $DB->fetch($orderLogsReturn)){
@@ -1357,7 +1364,7 @@ switch ($act) {
             
             $data[] = $row;
         }
-        exit(json_encode(["code"=>1,"data"=>$data,"msg"=>"成功"]));
+        exit(json_encode(["code"=>1,"data"=>$data,"total"=>$total,"page"=>$page,"limit"=>$limit,"msg"=>"成功"]));
         break;
     // 对接处理
     case 'duijie':

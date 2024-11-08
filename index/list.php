@@ -1436,8 +1436,9 @@ include_once('head.php');
         </select>
     </div>
     
+    <!--订单日志弹窗-->
     <div id="ddlogsDOM" class="layui-padding-1" style="display: none;">
-        <el-table :data="nowOrderLogs" style="width: 100%" stripe border show-overflow-tooltip size="small" empty-text="暂无日志">
+        <el-table id="ddlogsTable" :data="nowOrderLogs" style="width: 100%" stripe border show-overflow-tooltip size="small" empty-text="暂无日志">
             <?php if($userrow["uid"] == 1){ ?>
                 <el-table-column prop="uid" label="操作人" width="75" align="center">
                     <template #default="scope">
@@ -1474,6 +1475,7 @@ include_once('head.php');
             </el-table-column>
             <el-table-column prop="addtime" label="添加时间" width="185" align="center"></el-table-column>
         </el-table>
+        <div id="ddlogsTable_laypage" style="scale: 0.8; transform-origin: right; text-align: right;"></div>
     </div>
 
 </div>
@@ -1530,6 +1532,11 @@ include_once('head.php');
                 sex: [],
                 nowOid: 0,
                 nowOrderLogs: [],
+                nowOrderLogs_config: {
+                    width: 0,
+                    page: 1,
+                    limit: 10,
+                },
                 ddinfo3: {
                     status: false,
                     info: []
@@ -2221,19 +2228,43 @@ include_once('head.php');
                 const _this = this;
                 let loadIndex = layer.load(0);
                 axios.post("/apiadmin.php?act=orderLogs_get",{
-                    oid: a.oid
+                    oid: a.oid,
+                    page: _this.nowOrderLogs_config.page,
+                    limit: _this.nowOrderLogs_config.limit,
                 }).then(r=>{
                     if(r.data.code == 1){
                         _this.nowOid = a.oid;
                         _this.nowOrderLogs = r.data.data;
+                        
+                        layui.laypage.render({
+                            elem: 'ddlogsTable_laypage',
+                            count: r.data.total,
+                            curr: _this.nowOrderLogs_config.page,
+                            limit: _this.nowOrderLogs_config.limit,
+                            limits: [10, 30, 60, 100, 300, 500],
+                            prev: '<em>←</em>',
+                            next: '<em>→</em>',
+                            layout: ['limit', 'prev', 'page', 'next','count'],
+                            jump(obj, first){
+                                if(!first){
+                                    console.log(12,obj)
+                                    layer.load(0);
+                                    _this.nowOrderLogs_config.page = obj.curr;
+                                    _this.nowOrderLogs_config.limit = obj.limit;
+                                    _this.ddlogs(a);
+                                }else{
+                                }
+                            },
+                        });
+                        
                         if(type){
                             setTimeout(()=>{
                                 layer.open({
                                     type: 1,
                                     title: "订单日志",
                                     content: $("#ddlogsDOM"),
-                                    area: [($(window).width() - 20) + "px","auto"],
-                                    maxHeight: $(window).height() - 20,
+                                    area: [($(window).width() - 10) + "px","auto"],
+                                    maxHeight: $(window).height() - 10,
                                     btn: ["刷新","关闭"],
                                     yes(){
                                         _this.ddlogs(a);
@@ -2241,10 +2272,14 @@ include_once('head.php');
                                     success(){
                                         _this.$message.success("获取成功");
                                         layer.close(loadIndex);
+                                        layer.closeAll("loading");
+                                        _this.nowOrderLogs_config.width = $("#ddlogsTable").width();
                                     },
                                     end(){
                                         _this.nowOid = 0;
                                         _this.nowOrderLogs = [];
+                                        _this.nowOrderLogs_config.page = 1;
+                                        _this.nowOrderLogs_config.limit = 10;
                                     },
                                 })
                             },100)

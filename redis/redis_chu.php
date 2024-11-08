@@ -153,6 +153,7 @@ function processTask($taskId)
                 $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['oid'];
                 $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['id'];
                 $remarks_new = addslashes($result3['remarks']);
+                $result3['remarks'] = $remarks_new;
 
                 $uptime = getTimeStamp();
                 $ok = $DB->query("UPDATE qingka_wangke_order SET `name`='{$result3['name']}',`kcname`='{$result3['kcname']}', `yid`='{$result3['yid']}', `status`='{$status_new}', `courseStartTime`='{$result3['kcks']}', `courseEndTime`='{$result3['kcjs']}', `examStartTime`='{$result3['ksks']}', `examEndTime`='{$result3['ksjs']}', `process`='{$result3['process']}', `remarks`='{$remarks_new}' , `uptime`='{$uptime}' WHERE `user`='{$result3['user']}' AND `oid`='$oid' AND `yid`='{$result3['yid']}'");
@@ -168,7 +169,7 @@ function processTask($taskId)
                         $logContent = formatLog($oid, $oid2[1] . "状态无需更新！跳过。\r\n 队列池剩余：{$redis->LLEN($codeType)}");
                         writeLog($logFilePath, $logContent);
                     } else {
-                        orderLogs($oid, -999, "进度更新", "【自动批量】最新进度：".$row['remarks'], "0");
+                        orderLogs($oid, -999, "进度更新", "【自动批量】最新进度：".$result3['remarks'], "0");
                         $logContent = "状态更新：{$row['status']}=>{$status_new}\r\n进度更新：{$row['process']}=>{$process_new}\r\n备注更新：{$row['remarks']}=>{$remarks_new}\r\n 队列池剩余：{$redis->LLEN($codeType)}";
                         $logContent = formatLog($oid, '', $logContent);
                         writeLog($logFilePath, $logContent);
@@ -195,6 +196,7 @@ function processTask($taskId)
                     $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['oid'];
                     $result3['yid'] = !empty($result3['yid']) ? $result3['yid'] : $result3['id'];
                     $remarks_new = addslashes($result3['remarks']);
+                    $result3['remarks'] = $remarks_new;
 
                     $ok = $DB->query("update qingka_wangke_order set `name`='{$result3['name']}',`yid`='{$result3['yid']}',`status`='{$result3['status_text']}',`courseStartTime`='{$result3['kcks']}',`courseEndTime`='{$result3['kcjs']}',`examStartTime`='{$result3['ksks']}',`examEndTime`='{$result3['ksjs']}',`process`='{$result3['process']}',`remarks`='{$remarks_new}' ,`uptime`='{$date}' where `user`='{$result3['user']}' and `kcname`='{$result3['kcname']}' ");
                     if ($ok) {
@@ -207,7 +209,7 @@ function processTask($taskId)
                             $logContent = formatLog($oid, "状态无需更新！跳过。\r\n队列池剩余：{$redis->LLEN($codeType)}");
                             writeLog($logFilePath, $logContent);
                         } else {
-                            orderLogs($oid, -999, "进度更新", "【自动批量】最新进度：".$row['remarks'], "0");
+                            orderLogs($oid, -999, "进度更新", "【自动批量】最新进度：".$result3['remarks'], "0");
                             $logContent = "状态更新：{$row['status']}=>{$status_new}\r\n进度更新：{$row['process']}=>{$process_new}\r\n备注更新：{$row['remarks']}=>{$remarks_new}\r\n队列池剩余：{$redis->LLEN($codeType)}";
                             $logContent = formatLog($oid, '', $logContent);
                             writeLog($logFilePath, $logContent);
