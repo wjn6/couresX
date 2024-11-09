@@ -701,6 +701,9 @@ include_once('head.php');
                                         <template v-else-if="scope.row.type == 'lanyangyang'">
                                             懒洋洋订单
                                         </template>
+                                        <template v-else-if="scope.row.type == 'lanyangyang2'">
+                                            懒洋洋无查
+                                        </template>
                                         <template v-else>
                                             未知 | {{ scope.row.type }}
                                         </template>
