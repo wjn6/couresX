@@ -454,7 +454,8 @@ location @rewrite {
 							}, 1000)
 						}, 1000)
 					} else {
-						layer.msg('网络异常，请重试...');
+					    console.log("asd1",r)
+						layer.msg(r.body.msg?r.body.msg:'网络异常，请重试...');
 					}
 				})
 				return false;

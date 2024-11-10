@@ -3,7 +3,6 @@
 $act = $_GET['act'] ?? ''; 
 
 include_once('../Checkorder/configuration.php');
-include_once('../confing/authcodeClass.php');
 
 $version = '2.0.1.2';
 
@@ -116,7 +115,10 @@ switch ($act) {
     $configContent = preg_replace("/\\\$pwd\\s*=\\s*([^;]+)/", "\$pwd = '$pwd'", $configContent);
     $configContent = preg_replace("/\\\$dbname\\s*=\\s*([^;]+)/", "\$dbname = '$dbname'", $configContent);
 
-    file_put_contents($configFile, $configContent);
+    if(@file_put_contents($configFile, $configContent) == false){
+      exit(json_encode(["code" => -1,"msg"=>"权限不足，无法写入$configFile</br>请赋予该文件正确的权限(755/www)"]));
+    } else {
+    }
     if (
       preg_match("/\\\$dbname\\s*=\\s*'([^']+)'/", $configContent, $matchesDbname) &
       preg_match("/\\\$user\\s*=\\s*'([^']+)'/", $configContent, $matchesDbname) &

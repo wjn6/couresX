@@ -512,7 +512,6 @@ switch ($act) {
             exit('{"code":-10,"msg":"请先登录"}');
         }
         $a = $DB->get_row("select uid,user,notice from qingka_wangke_user where uid='{$userrow['uuid']}' ");
-        $dd = $DB->count("select count(oid) from qingka_wangke_order where uid='{$userrow['uid']}' ");
         //$zcz=$DB->count("select sum(money) as money from qingka_wangke_log where type='上级充值' and uid='{$userrow['uid']}' ");
 
         //安全验证1
@@ -545,10 +544,10 @@ switch ($act) {
 
         $jtdate = date('Y-m-d h:i:s');
         //代理数据统计
-        $dlzs = $DB->count("select count(uid) from qingka_wangke_user where uuid='{$userrow['uid']}' ");
-        $dldl = $DB->count("select count(uid) from qingka_wangke_user where uuid='{$userrow['uid']}' and endtime>'$jtdate' ");
-        $dlzc = $DB->count("select count(uid) from qingka_wangke_user where uuid='{$userrow['uid']}' and addtime>'$jtdate' ");
-        $jrjd = $DB->count("select count(uid) from qingka_wangke_order where uid='{$userrow['uid']}' and addtime>'$jtdate' ");
+        $dlzs = (float)$DB->count("select count(uid) from qingka_wangke_user where uuid='{$userrow['uid']}' ");
+        $dldl = (float)$DB->count("select count(uid) from qingka_wangke_user where uuid='{$userrow['uid']}' and endtime>'$jtdate' ");
+        $dlzc = (float)$DB->count("select count(uid) from qingka_wangke_user where uuid='{$userrow['uid']}' and addtime>'$jtdate' ");
+        $jrjd = (float)$DB->count("select count(uid) from qingka_wangke_order where uid='{$userrow['uid']}' and addtime>'$jtdate' ");
 
 
         //       while($dllist2=$DB->fetch($DB->query("select uid from qingka_wangke_user where uuid='{$userrow['uid']}'"))){
@@ -559,10 +558,15 @@ switch ($act) {
         $dailitongji = array(
             'dlzc' => $dlzc,
             'dldl' => $dldl,
-            'dlxd' => $dlxd,
             'dlzs' => $dlzs,
             'jrjd' => $jrjd
         );
+        
+        // 订单统计    
+        $dd = [
+            "total" => (int)$DB->count("select count(oid) from qingka_wangke_order where uid='{$userrow['uid']}' "),
+            "today" => (int)$DB->count("select count(oid) from qingka_wangke_order where addtime>'$jtdate' and uid='{$userrow['uid']}'"),
+        ];
 
 
         $data = array(
@@ -575,13 +579,13 @@ switch ($act) {
             'nickname' => $userrow['nickname'],
             'faceimg' => $userrow['faceimg'],
             'money' => round($userrow['money'], 3),
-            'addprice' => $userrow['addprice'],
-            'key' => $userrow['key'],
+            'addprice' => (float)$userrow['addprice'],
+            'key' => empty($userrow['key'])?"":$userrow['key'],
             'sjuser' => $a['user'],
             'dd' => $dd,
-            'zcz' => $userrow['zcz'],
+            'zcz' => (float)$userrow['zcz'],
             'yqm' => $userrow['yqm'],
-            'yqprice' => $userrow['yqprice'],
+            'yqprice' => (float)$userrow['yqprice'],
             // 'notice' => $conf['notice'],
             'my_notice' => $userrow['notice'],
             'sjnotice' => $a['notice'],
@@ -589,7 +593,6 @@ switch ($act) {
             'pass' => $userrow['pass'],
             'qq' => $userrow['qq'] ?: '',
             'wx' => $userrow['wx'] ?: '',
-            'homenotice' => $homenotice,
         );
         exit(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
         break;
@@ -2220,6 +2223,8 @@ switch ($act) {
 
         $a = $DB->query("select * from qingka_wangke_user {$sql} order by uid desc limit $pageu,$pagesize ");
         $count1 = (float) $DB->count("select count(*) from qingka_wangke_user {$sql}");
+        
+        $data = [];
         while ($row = $DB->fetch($a)) {
             $zcz = 0;
             if ($userrow['uid'] == '1') {
@@ -2240,7 +2245,8 @@ switch ($act) {
             if (empty($dd)) {
                 $tongji["money_waitUse"] = $tongji["money_waitUse"] - $row["money"];
             }
-
+            
+            $row['key'] = empty($row['key'])?"":$row['key'];
             // $row["dl_num"] = 0;
 
             $data[] = $row;
