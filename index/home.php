@@ -406,32 +406,15 @@ include_once('head.php');
                                         style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;height: 65px;">
                                         <div>
                                             <h3 style="margin-bottom: 5px;">
-                                                <?php
-                                                if ($userrow['uid'] != "1") {
-                                                    $a = $DB->count("select count(*) from qingka_wangke_user where uuid='{$userrow['uid']}'");
-                                                    echo $a . "";
-                                                } else {
-                                                    $a = $DB->count("select count(*) from qingka_wangke_user");
-                                                    echo $a - 2 . "";
-                                                }
-                                                ?>
-
+                                                {{row.dl.total}}
                                             </h3>
                                             <div class="layui-font-gray layui-font-12">
                                                 今日开通：
-                                                <?php
-                                                if ($userrow['uid'] != "1") {
-                                                    $a = $DB->count("select count(*) from qingka_wangke_user where addtime>'$jtdate' and uuid='{$userrow['uid']}'");
-                                                    echo $a . "";
-                                                } else {
-                                                    $a = $DB->count("select count(*) from qingka_wangke_user where addtime>'$jtdate'");
-                                                    echo $a . "";
-                                                }
-                                                ?>
+                                                {{row.dl.today_zc}}
                                             </div>
                                         </div>
                                         <div class="layui-hide-xs">
-                                            <el-progress type="circle" :percentage="progressOK?computed_todaykaitong:0"
+                                            <el-progress type="circle" :percentage="progressOK?((isNaN(row.dl.today_zc / row.dl.total)?0:row.dl.today_zc / row.dl.total)*100).toFixed(2):0"
                                                 width="60" :stroke-width="4">
                                             </el-progress>
                                         </div>
@@ -816,7 +799,7 @@ include_once('head.php');
                     dd:{
                         
                     },
-                    dailitongji:{
+                    dl:{
                         
                     }
                 },

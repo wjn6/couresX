@@ -544,7 +544,6 @@ switch ($act) {
 
         $jtdate = date('Y-m-d h:i:s');
         //代理数据统计
-        $dlzs = (float)$DB->count("select count(uid) from qingka_wangke_user where uuid='{$userrow['uid']}' ");
         $dldl = (float)$DB->count("select count(uid) from qingka_wangke_user where uuid='{$userrow['uid']}' and endtime>'$jtdate' ");
         $dlzc = (float)$DB->count("select count(uid) from qingka_wangke_user where uuid='{$userrow['uid']}' and addtime>'$jtdate' ");
         $jrjd = (float)$DB->count("select count(uid) from qingka_wangke_order where uid='{$userrow['uid']}' and addtime>'$jtdate' ");
@@ -553,19 +552,29 @@ switch ($act) {
         //       while($dllist2=$DB->fetch($DB->query("select uid from qingka_wangke_user where uuid='{$userrow['uid']}'"))){
         //       	  $dlxd+=$DB->count("select count(oid) from qingka_wangke_order where uid='{$ddlist2['uid']}' and addtime>'$jtdate' ");
         //       }
-
-        //$dlxd="emmmmmm";
-        $dailitongji = array(
-            'dlzc' => $dlzc,
-            'dldl' => $dldl,
-            'dlzs' => $dlzs,
-            'jrjd' => $jrjd
-        );
+        
+        // $dailitongji = array(
+        //     'dlzc' => $dlzc,
+        //     'dldl' => $dldl,
+        //     'dlzs' => (float)$DB->count("select count(uid) from qingka_wangke_user where 1=1 $sql_dlzs "),
+        //     'jrjd' => $jrjd
+        // );
+        
+        $sql_dl_total = $userrow["uid"] == 1 ? "and uid!=1 " : "and uuid='{$userrow['uid']}' and uid!='{$userrow['uid']}'";
+        $sql_dl_today_zc = $userrow["uid"] == 1 ? "and uid!=1 " : "and uuid='{$userrow['uid']}' and uid!='{$userrow['uid']}'";
+        // 代理统计
+        $dl = [
+            'total' => (float)$DB->count("select count(uid) from qingka_wangke_user where 1=1 $sql_dl_total "),
+            'today_zc' => (float)$DB->count("select count(uid) from qingka_wangke_user where 1=1 and addtime>'$jtdate' $sql_dl_total  "),
+        ];
         
         // 订单统计    
+        $sql_total = $userrow["uid"] == 1 ? "" : "and uid='{$userrow['uid']}'";
+        $sql_today = $userrow["uid"] == 1 ? "" : "and uid='{$userrow['uid']}'";
+        
         $dd = [
-            "total" => (int)$DB->count("select count(oid) from qingka_wangke_order where uid='{$userrow['uid']}' "),
-            "today" => (int)$DB->count("select count(oid) from qingka_wangke_order where addtime>'$jtdate' and uid='{$userrow['uid']}'"),
+            "total" => (int)$DB->count("select count(oid) from qingka_wangke_order where 1=1 {$sql_total} "),
+            "today" => (int)$DB->count("select count(oid) from qingka_wangke_order where addtime>'$jtdate' $sql_today "),
         ];
 
 
@@ -590,6 +599,7 @@ switch ($act) {
             'my_notice' => $userrow['notice'],
             'sjnotice' => $a['notice'],
             'dailitongji' => $dailitongji,
+            "dl" => $dl,
             'pass' => $userrow['pass'],
             'qq' => $userrow['qq'] ?: '',
             'wx' => $userrow['wx'] ?: '',
